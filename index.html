@@ -632,6 +632,7 @@ footer h4{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var
         The count at the top of the page is every event held. The <b>Upcoming</b> button carries the number still
         to come — the rest have already started, or are weekly activities, or RCIA / RCIY journeys already begun.
         Use <b>Also show</b> to bring those in.<br>
+        <span id="privacynote"></span>
         <b>Best viewed on a laptop or desktop.</b> The table view puts every detail side by side; on a phone the
         page falls back to cards and the filters fold behind a single button.
       </div>
@@ -899,6 +900,7 @@ const EVENTS = [
 {id:227,name:"Opus Dei Retreat, Johor Bahru — young women (Hillcrest)",org:"Opus Dei Singapore",orgType:"Lay Ministry",district:"Overseas",start:"2026-12-10",end:"2026-12-13",time:"Residential, Thursday to Sunday",venue:"Johor Bahru, Malaysia",addr:"Johor Bahru, Malaysia",virtual:false,fee:"See registration",reg:null,restrict:"Young women aged 17–30. Organised through Hillcrest — hgcconnect@gmail.com or WhatsApp 9108 8654",cat:"Retreat",source:"https://opusdei.org/en-sg/article/activities-in-singapore/",desc:"A residential silent retreat across the Causeway in Johor Bahru, run by Opus Dei for young people from Singapore.",tags:["Prayer","Formation"]},
 {id:116,name:"Responder Plus Programme",org:"Church of St Stephen",orgType:"Parish",district:"East",start:"2026-12-12",end:"2026-12-12",time:"9:00am – 12:30pm",venue:"Church of St Stephen",addr:"30 Sallim Road, Singapore 387639",virtual:false,fee:"See registration",reg:"mailto:css.secretariat@catholic.org.sg",restrict:"Registration closes 1 October 2026",cat:"Formation",source:"https://ststephen.sg/",desc:"An SCDF course in first aid, CPR-AED and basic firefighting, taught through classroom learning and hands-on practice.",tags:["Volunteer & Outreach"]},
 {id:284,name:"Year End Mass (Bahasa Indonesia)",org:"Indonesian Catholic Community",orgType:"Lay Ministry",district:"North",start:"2026-12-31",end:"2026-12-31",time:"8:00pm",venue:"Holy Spirit Chapel, Church of the Holy Spirit",addr:"248 Upper Thomson Road, Singapore 574371",virtual:false,fee:"Free",reg:"mailto:angelika.sundari@hotmail.com",restrict:"All welcome. The archdiocesan notice still carries last year's wording — confirm before going",cat:"Mass",source:"https://www.catholic.sg/event/year-end-mass-bahasa-indonesia/2026-12-31/",desc:"The Indonesian community's year-end Mass, followed by fellowship.",lang:"Indonesian",tags:["Fellowship"]},
+{id:289,name:"CDD 100th Founding Anniversary — Mass and lunch",org:"Congregation of the Disciples of the Lord (CDD)",orgType:"Mission Group",district:"North",start:"2027-01-01",end:"2027-01-01",time:"Rosary 10:30am, Mass 11:00am, buffet lunch after",venue:"St Joseph's Church (Bukit Timah)",addr:"620 Upper Bukit Timah Road, Singapore 678116",virtual:false,fee:"See registration",reg:"https://docs.google.com/forms/d/1zP_p3z8GRurgeJOcOo2XnHCXAdYlD8fMWiRYk3FAcvQ/viewform",restrict:"All are welcome. Please RSVP by 3 December 2026, saying whether you will stay for lunch. Enquiries: Kathleen, 8057 3957.",cat:"Mass",source:"https://docs.google.com/forms/d/1zP_p3z8GRurgeJOcOo2XnHCXAdYlD8fMWiRYk3FAcvQ/viewform",desc:"The Congregation of the Disciples of the Lord — Congregatio Discipulorum Domini, 主徒会 — marks a century since its founding in 1927, with His Eminence William Cardinal Goh as main celebrant. The Rosary is recited first, Mass is in English, and a buffet lunch follows.",tags:["Fellowship","Prayer"]},
 {id:39,name:"Kerygma 2027",org:"Office for Young People",orgType:"Archdiocesan",district:"City",start:"2027-01-05",end:"2027-03-01",time:"Weekly series",venue:"Catholic Centre",addr:"55 Waterloo Street, Singapore 187954",virtual:false,fee:"See registration",reg:"mailto:joel.oyp@catholic.org.sg",restrict:"Ages 18–25",cat:"Youth",source:"https://t.me/s/oypsg",desc:"An eight-week formation programme for young adults on the core Christian proclamation.",tags:["Formation"]},
 {id:286,name:"Retreats by the Sea — Journey to Listening (preached retreat)",org:"Our Ignatian Journey",orgType:"Lay Ministry",district:"Overseas",start:"2027-01-06",end:"2027-01-10",time:"Five days, four nights",venue:"Sacred Heart of Jesus Retreat House, Cha-am (near Hua Hin)",addr:"1341/3 Petchakasem Road, Cha-am, Amphoe Cha-am, Petchaburi 76120, Thailand",virtual:false,fee:"S$520–850 depending on room and rate chosen, excluding airfare",reg:"https://docs.google.com/forms/d/e/1FAIpQLScSX-F4PLFjzuLTMzyVeTKW9oo-G5la1X_siaLHmDn1wxBLyA/viewform",restrict:"Travel insurance covering COVID-19 is required. Can be booked together with the silent retreat that follows, at a combined rate.",cat:"Retreat",source:"https://docs.google.com/forms/d/e/1FAIpQLScSX-F4PLFjzuLTMzyVeTKW9oo-G5la1X_siaLHmDn1wxBLyA/viewform",desc:"A preached retreat by the sea at Cha-am, near Hua Hin, with five days of input sessions. The fee covers full board, an ensuite room and airport transfers, but not flights. Subsidised, at-cost and supporting rates are offered.",tags:["Prayer"]},
 {id:287,name:"Retreats by the Sea — Journey into Solitude (silent retreat)",org:"Our Ignatian Journey",orgType:"Lay Ministry",district:"Overseas",start:"2027-01-11",end:"2027-01-17",time:"Seven days, six nights",venue:"Sacred Heart of Jesus Retreat House, Cha-am (near Hua Hin)",addr:"1341/3 Petchakasem Road, Cha-am, Amphoe Cha-am, Petchaburi 76120, Thailand",virtual:false,fee:"S$845–1,100 depending on rate chosen, excluding airfare and the spiritual director's stipend",reg:"https://docs.google.com/forms/d/e/1FAIpQLScSX-F4PLFjzuLTMzyVeTKW9oo-G5la1X_siaLHmDn1wxBLyA/viewform",restrict:"Single rooms only. Travel insurance covering COVID-19 is required. The organisers suggest a stipend of about S$50 per session for your spiritual director, which is not in the fee. Can be booked together with the preached retreat before it, at a combined rate.",cat:"Retreat",source:"https://docs.google.com/forms/d/e/1FAIpQLScSX-F4PLFjzuLTMzyVeTKW9oo-G5la1X_siaLHmDn1wxBLyA/viewform",desc:"A seven-day silent, individually directed retreat by the sea at Cha-am, near Hua Hin, following straight on from the preached retreat. The fee covers full board, a single ensuite room and airport transfers, but not flights.",tags:["Prayer"]},
@@ -1199,13 +1201,16 @@ const MONTHS = ["january","february","march","april","may","june","july","august
 const DAYS = ["sunday","monday","tuesday","wednesday","thursday","friday","saturday"];
 
 /* Fold case, accents and curly punctuation away, drop apostrophes so "St Paul's"
-   and "st pauls" are the same string, and turn everything else into a space. */
+   and "st pauls" are the same string, and turn punctuation into a space.
+   Letters in every script are kept: this calendar carries Mandarin, Tamil and Indonesian
+   listings, and an earlier version threw away everything outside a–z, so a reader typing
+   主徒会 got not "nothing found" but the entire calendar — the query had been emptied. */
 function norm(v){
   return String(v??"")
     .toLowerCase()
-    .normalize("NFD").replace(/[̀-ͯ]/g,"")
+    .normalize("NFD").replace(/\p{Diacritic}/gu,"")
     .replace(/['‘’‛`]/g,"")
-    .replace(/[^a-z0-9]+/g," ")
+    .replace(/[^\p{L}\p{N}]+/gu," ")
     .replace(/\s+/g," ")
     .trim();
 }
@@ -1501,7 +1506,7 @@ function showEvent(id){
     `<div class="k">Fee</div><div class="v">${feeEl(e)}</div>`+
     (e.restrict?`<div class="k">Who may attend</div><div class="v" style="font-size:14px;color:var(--ink2)">${esc(e.restrict)}</div>`:"")+
     `<div style="margin-top:22px;display:flex;gap:16px;flex-wrap:wrap;align-items:center">${regEl(e)}`+
-    `<a class="srclink" href="${esc(e.source)}" target="_blank" rel="noopener">View source ↗</a></div>`;
+    `<a class="srclink" data-org="${esc(e.org)}" href="${esc(e.source)}" target="_blank" rel="noopener">View source ↗</a></div>`;
   const m = document.getElementById("evModal");
   m.setAttribute("open",""); document.body.style.overflow="hidden";
 }
@@ -1556,7 +1561,7 @@ function feeEl(e){
 function regEl(e){
   if(!e.reg) return "";
   const label = e.reg.startsWith("mailto:") ? "Email to register" : "Register";
-  return `<a class="reglink" href="${esc(e.reg)}" target="_blank" rel="noopener">${label} →</a>`;
+  return `<a class="reglink" data-org="${esc(e.org)}" href="${esc(e.reg)}" target="_blank" rel="noopener">${label} →</a>`;
 }
 
 function renderTable(rows){
@@ -1574,7 +1579,7 @@ function renderTable(rows){
       <td><div class="evcell">${iconEl(e)}<div style="min-width:0">
         <div class="evname">${esc(e.name)}${e.recurring?'<span class="recbadge">Ongoing</span>':""}${e.lang?`<span class="langbadge">${esc(e.lang)}</span>`:""}</div>
         ${state.desc && e.desc ? `<div class="evdesc">${esc(e.desc)}</div>` : ""}
-        <div class="evlinks sans">${regEl(e)}<a class="srclink" href="${esc(e.source)}" target="_blank" rel="noopener">Source ↗</a></div>
+        <div class="evlinks sans">${regEl(e)}<a class="srclink" data-org="${esc(e.org)}" href="${esc(e.source)}" target="_blank" rel="noopener">Source ↗</a></div>
       </div></div></td>
       <td class="datecell">${dateEl(e)}${e.datePrecision==="month"?"":`<div class="d-time sans">${esc(e.time||"")}</div>`}</td>
       <td><div class="kindcell">${kindChips(e)}</div></td>
@@ -1609,7 +1614,7 @@ function renderCards(rows){
         <div class="crow"><div class="k">Who</div><div class="v">${esc(e.org)}</div></div>
         <div class="crow"><div class="k">Fee</div><div class="v">${feeEl(e)}</div></div>
         ${e.restrict?`<div class="crow"><div class="k">Note</div><div class="v" style="color:var(--ink2);font-size:13px">${esc(e.restrict)}</div></div>`:""}
-        <div class="cfoot">${regEl(e)||"<span></span>"}<a class="srclink" href="${esc(e.source)}" target="_blank" rel="noopener">Source ↗</a></div>
+        <div class="cfoot">${regEl(e)||"<span></span>"}<a class="srclink" data-org="${esc(e.org)}" href="${esc(e.source)}" target="_blank" rel="noopener">Source ↗</a></div>
       </div>
       <button type="button" class="cexpand sans" aria-expanded="false">
         <span class="cexpandtxt">Organiser, cost, how to register</span><span class="marrow">▾</span>
@@ -1679,6 +1684,13 @@ function render(){
     if(view==="table") renderTable(rows);
     else if(view==="cards") renderCards(rows);
     else renderCalendar(rows);
+  } else {
+    /* Hiding the three views without emptying them left the previous search's rows sitting in
+       the page — invisible, but still there to be printed, copied or exposed by any later style
+       change. Nothing on screen should outlive the results it belongs to. */
+    document.getElementById("tbody").innerHTML = "";
+    document.getElementById("cards").innerHTML = "";
+    document.getElementById("calendar").innerHTML = "";
   }
   const sc = document.querySelector(".scroller"), hint = document.getElementById("scrollhint");
   if(sc && hint) hint.style.display = (sc.scrollWidth > sc.clientWidth + 4) ? "block" : "none";
@@ -1827,6 +1839,7 @@ function buildMulti(id){
       const v = ev.target.closest(".mopt").dataset.v;
       const sel = state[m.key];
       state[m.key] = ev.target.checked ? [...sel, v] : sel.filter(x=>x!==v);
+      if(id === "mOrg" && ev.target.checked) noteOrganiserFilter(v);
       render();
     });
   });
@@ -2054,9 +2067,81 @@ Object.entries(VIEWS).forEach(([btn,v])=>{
 });
 window.addEventListener("resize", ()=>render());
 
+/* ---------- counting visits ----------
+   Off until configured: while `provider` is empty the page requests nothing from anywhere and
+   behaves exactly as it always has.
+
+   Two providers are wired up, because they answer different questions:
+     "cloudflare" — visits, when, country, device, referrer. Free. No cookies. Cannot measure
+                    how long people stay, and cannot count organiser interest.
+     "umami"      — all of the above plus visit duration and organiser interest. Free tier.
+   Switch between them by changing one word below and pasting the matching id.
+
+   What is never done, on either: no cookies, no advertising profile, no session replay, and no
+   record of what anybody searched for. Interest is counted at the level of the organiser and
+   never the individual listing — the difference matters on a page that carries bereavement,
+   divorce and mental-health support alongside everything else. */
+const ANALYTICS = {
+  provider:  "cloudflare",   // "cloudflare" | "umami" | "" to switch counting off entirely
+  token:     "",             // Cloudflare: the Web Analytics token from your dashboard
+  websiteId: "",             // Umami: the website id from your dashboard
+  umamiSrc:  "https://cloud.umami.is/script.js"
+};
+const analyticsOn = () =>
+  (ANALYTICS.provider === "cloudflare" && ANALYTICS.token) ||
+  (ANALYTICS.provider === "umami" && ANALYTICS.websiteId);
+/* Only Umami can be told about anything beyond a page view. */
+const tracksInterest = () => ANALYTICS.provider === "umami" && !!ANALYTICS.websiteId;
+
+(function startCounting(){
+  if(!analyticsOn()) return;                       // not configured: load nothing, request nothing
+  const tag = document.createElement("script");
+  tag.defer = true;                                // never in the way of the page drawing itself
+  if(ANALYTICS.provider === "cloudflare"){
+    tag.src = "https://static.cloudflareinsights.com/beacon.min.js";
+    tag.setAttribute("data-cf-beacon", JSON.stringify({token: ANALYTICS.token}));
+  } else {
+    tag.src = ANALYTICS.umamiSrc;
+    tag.setAttribute("data-website-id", ANALYTICS.websiteId);
+    tag.setAttribute("data-do-not-track", "true");  // honour a reader's Do Not Track setting
+  }
+  document.body.appendChild(tag);
+})();
+
+/* Record interest in an organiser, and nothing finer. Does nothing at all when counting is off,
+   when the provider cannot carry it, or when the script has not loaded — so the page behaves
+   identically either way. */
+function noteInterest(kind, org){
+  if(!tracksInterest() || !org) return;
+  try{ window.umami && window.umami.track(kind, {organiser: org}); }catch(e){}
+}
+/* Following a listing through to its source or its registration form is the strongest signal
+   that something drew a reader in, so that is what is counted. Ticking an organiser in the
+   filter is a weaker signal, counted separately. */
+document.addEventListener("click", ev=>{
+  const a = ev.target.closest("a.srclink[data-org], a.reglink[data-org]");
+  if(!a) return;
+  noteInterest(a.classList.contains("reglink") ? "registration-opened" : "source-opened", a.dataset.org);
+});
+function noteOrganiserFilter(org){ noteInterest("organiser-filtered", org); }
+
 /* ---------- stats & footer ---------- */
 document.getElementById("statTotal").textContent = EVENTS.length;
 document.getElementById("statOrgs").textContent  = new Set(EVENTS.map(e=>e.org)).size;
+/* Say what is counted, and say it accurately for whichever provider is switched on — a privacy
+   note that overstates or understates what happens is worse than none. */
+(function paintPrivacyNote(){
+  const el = document.getElementById("privacynote");
+  if(!el) return;
+  if(!analyticsOn()){ el.innerHTML = ""; return; }
+  const extra = tracksInterest()
+    ? " roughly how long they stay, and which organisers draw interest,"
+    : "";
+  el.innerHTML = "<b>Visitors:</b> this site counts how many people come, when, roughly which country they are in,"
+    + " whether they are on a phone or a computer," + extra
+    + " and nothing else. It sets no cookies, builds no advertising profile, and never records what you"
+    + " searched for or which listing you read.<br>";
+})();
 document.getElementById("statSoon").textContent  = EVENTS.filter(e=>isAhead(e) && !e.recurring && daysAway(e)<=30).length;
 const collected = new Date(DATA_COLLECTED+"T00:00:00");
 const ageDays = Math.round((TODAY - collected)/MS);
