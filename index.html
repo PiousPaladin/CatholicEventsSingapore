@@ -177,7 +177,45 @@ select:focus{border-color:var(--gold)}
   border:1px solid var(--line);border-radius:8px;padding:5px 8px;background:var(--card);
   color:var(--ink);flex:1;min-width:0}
 .mrange input[type=date]:focus{outline:none;border-color:var(--gold)}
+.mopt.tall{align-items:flex-start;padding:9px 10px}
+.mopt.tall .mtxt{white-space:normal;display:block;line-height:1.35}
+.mopt.tall .mtxt em{display:block;font-style:normal;font-size:11.5px;color:var(--ink2);margin-top:2px}
+.msheetdone{display:none}
+
 @media(max-width:640px){ .multipanel{min-width:212px} }
+
+/* ---------- filter panels on a phone ----------
+   As a dropdown inside the scrolling filter drawer these panels were clipped: the options were
+   there, but you had to know to scroll a box inside another box to reach them, and nothing said
+   so. Below 720px each panel becomes a sheet anchored to the bottom of the window instead —
+   its own surface, its own scroll, a dimmed page behind it, and a Done button where a thumb
+   already is. Nothing can be cut off, because the sheet is measured against the window rather
+   than against whatever it is nested in. */
+@media(max-width:720px){
+  .multi .multipanel{
+    position:fixed;left:0;right:0;bottom:0;top:auto;width:auto;min-width:0;max-width:none;
+    max-height:78vh;border-radius:18px 18px 0 0;padding:8px 10px calc(8px + env(safe-area-inset-bottom));
+    box-shadow:0 -10px 40px rgba(51,41,31,.24);z-index:60;
+    animation:sheetup .18s ease-out}
+  @keyframes sheetup{from{transform:translateY(14px);opacity:.6}to{transform:none;opacity:1}}
+  .multi .mhead{position:sticky;top:0;background:var(--card);z-index:1;
+    padding:9px 6px 10px;font-size:12.5px}
+  .multi .mhead::before{
+    content:"";position:absolute;top:-2px;left:50%;transform:translateX(-50%);
+    width:38px;height:4px;border-radius:2px;background:var(--line)}
+  .multi .mopt{padding:11px 8px;font-size:14.5px}
+  .multi .mopt .mtxt{white-space:normal}
+  .multi .mfilter{position:sticky;top:40px;background:var(--card);z-index:1}
+  .msheetdone{display:block;position:sticky;bottom:0;background:var(--card);padding:9px 4px 4px;
+    border-top:1px solid var(--line);margin-top:6px}
+  .donebtn{width:100%;padding:12px;border:0;border-radius:11px;background:var(--plum);color:#fff;
+    font-family:ui-sans-serif,-apple-system,"Segoe UI",Inter,sans-serif;font-size:14.5px;
+    font-weight:650;cursor:pointer}
+  #sheetscrim{display:block}
+}
+#sheetscrim{display:none;position:fixed;inset:0;background:rgba(51,41,31,.34);z-index:55}
+#sheetscrim[hidden]{display:none!important}
+@media(max-width:720px){ body.sheetopen{overflow:hidden} }
 
 .searchnote{
   margin:14px 2px 0;padding:11px 15px;border-radius:12px;
@@ -279,6 +317,28 @@ td{padding:15px 13px;vertical-align:top;font-size:14.5px;overflow-wrap:break-wor
 
 /* ---------- Cards (mobile / card view) ---------- */
 .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:16px}
+.cexpand{display:none}
+@media(max-width:720px){
+  .cards{grid-template-columns:1fr;gap:12px}
+  .card{padding:14px;gap:8px}
+  .card .crow .k{flex:0 0 46px;font-size:10px}
+  .card .crow{font-size:13px}
+  .card .evname{font-size:15.5px;line-height:1.3}
+  .card .cmore{display:none}
+  .card.open .cmore{display:block}
+  .cexpand{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;
+    margin-top:11px;padding:9px 11px;border:1px solid var(--line);border-radius:10px;
+    background:var(--cream);color:var(--ink2);font-size:12.5px;font-weight:600;cursor:pointer;
+    text-align:left}
+  .cexpand .marrow{font-size:10px;opacity:.7;transition:transform .16s}
+  .card.open .cexpand{background:var(--gold-soft);border-color:rgba(192,138,46,.4);color:var(--ink)}
+  .card.open .cexpand .marrow{transform:rotate(180deg)}
+  .card .cfoot{margin-top:11px}
+  /* Three lines of description is enough to tell one retreat from another while scanning; the
+     rest arrives with the tap, so a collapsed card stays short enough that several fit at once. */
+  .card .evdesc{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+  .card.open .evdesc{display:block;overflow:visible}
+}
 .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--shadow);
   display:flex;flex-direction:column;gap:11px}
 .card .chead{display:flex;gap:12px;align-items:flex-start}
@@ -339,7 +399,16 @@ td{padding:15px 13px;vertical-align:top;font-size:14.5px;overflow-wrap:break-wor
 .calbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;
   background:var(--cream2);border-bottom:1px solid var(--line);flex-wrap:wrap}
 .calbar h3{margin:0;font-size:19px;font-weight:600}
-.calnav{display:flex;gap:6px;align-items:center}
+.calnav{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.calmode{display:inline-flex;border:1px solid var(--line);border-radius:9px;overflow:hidden;margin-right:4px}
+.calmode button{border:0;border-radius:0;background:transparent;padding:5px 11px}
+.calmode button+button{border-left:1px solid var(--line)}
+.calmode button[aria-pressed="true"]{background:var(--plum);color:#fff}
+.calmode button[aria-pressed="true"]:hover{color:#fff}
+/* A week has one row to fill instead of five or six, so the cells can be deep enough to show a
+   day's events in full rather than folding most of them behind "+3 more". */
+.calgrid.weekgrid .calcell{min-height:210px}
+.caldate .calmon{font-size:9.5px;color:var(--ink2);margin-left:4px;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
 .calnav button{font-family:ui-sans-serif,sans-serif;font-size:13px;border:1px solid var(--line);
   background:var(--card);color:var(--ink2);padding:6px 12px;border-radius:9px;cursor:pointer;transition:.14s}
 .calnav button:hover{border-color:var(--gold);color:var(--ink)}
@@ -405,7 +474,10 @@ footer h4{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var
 }
 .filtertoggle{display:none}
 @media(max-width:720px){
-  .controls{padding:9px 0 8px}
+  /* backdrop-filter makes this a containing block for anything fixed inside it, which pinned the
+     filter sheets to the toolbar instead of to the window and pushed half of each one off screen.
+     The background here is a near-opaque gradient anyway, so the blur costs nothing to drop. */
+  .controls{padding:9px 0 8px;backdrop-filter:none}
   #q{padding:12px 40px 12px 42px;font-size:16px}
   .searchbar svg{left:14px;width:17px;height:17px}
   .filtertoggle{
@@ -463,8 +535,8 @@ footer h4{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var
     </button>
 
     <div class="filters" id="filters">
-      <button class="chip" id="fUpcoming" aria-pressed="true">Upcoming</button>
-      <button class="chip" id="fOngoing" aria-pressed="false">Already under way<span class="chipcount" id="ongoingCount"></span></button>
+      <button class="chip" id="fUpcoming" aria-pressed="true">Upcoming<span class="chipcount" id="upcomingCount"></span></button>
+      <span class="multi wide" id="mAlso"><button type="button" class="multibtn" aria-haspopup="true" aria-expanded="false" title="Things left out of the default view — tick to bring them in"><span class="mlabel">Also show…</span><span class="marrow">▾</span></button><div class="multipanel" hidden></div></span>
       <button class="chip" id="fFree" aria-pressed="false">Free only</button>
       <button class="chip" id="fOnline" aria-pressed="false">Online only</button>
       <button class="chip" id="fDesc" aria-pressed="true">Descriptions</button>
@@ -473,11 +545,6 @@ footer h4{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var
         <option value="en">English only</option>
         <option value="all">All languages</option>
         <option value="vern">Vernacular only</option>
-      </select></span>
-      <span class="selectwrap"><select id="fFreq" title="Frequency">
-        <option value="excl">Daily/weekly excluded</option>
-        <option value="all">All frequencies</option>
-        <option value="only">Daily/weekly only</option>
       </select></span>
       <span class="multi" id="mCat"><button type="button" class="multibtn" aria-haspopup="true" aria-expanded="false" title="Kinds of event — tick as many as you like"><span class="mlabel">All kinds of event</span><span class="marrow">▾</span></button><div class="multipanel" hidden></div></span>
       <span class="multi" id="mLoc"><button type="button" class="multibtn" aria-haspopup="true" aria-expanded="false" title="Locations — tick as many as you like"><span class="mlabel">All locations</span><span class="marrow">▾</span></button><div class="multipanel" hidden></div></span>
@@ -543,6 +610,8 @@ footer h4{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var
     </div>
   </div>
 
+  <div id="sheetscrim" hidden></div>
+
   <footer class="sans">
     <div class="fgrid">
       <div>
@@ -560,7 +629,9 @@ footer h4{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var
         Every event links back to the page it came from.<br>
         Details marked “See registration” were not published on the source page.<br>
         <b>Not listed:</b> regular Masses, novenas and standing devotions.<br>
-        Use the <b>Language</b> and <b>Frequency</b> menus to widen the view — both start narrowed.<br>
+        The count at the top of the page is every event held. The <b>Upcoming</b> button carries the number still
+        to come — the rest have already started, or are weekly activities, or RCIA / RCIY journeys already begun.
+        Use <b>Also show</b> to bring those in.<br>
         <b>Best viewed on a laptop or desktop.</b> The table view puts every detail side by side; on a phone the
         page falls back to cards and the filters fold behind a single button.
       </div>
@@ -587,20 +658,64 @@ footer h4{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var
 // Catholic Event Calendar Singapore — event dataset
 // Patched by merge_events.py — do not retype this file by hand.
 
-const DATA_COLLECTED = "2026-08-29";
+const DATA_COLLECTED = "2026-08-30";
 
 const EVENTS = [
+{id:241,name:"RCIA / OCIA 2026 intake — Church of Our Lady Star of the Sea",org:"Church of Our Lady Star of the Sea",orgType:"Parish",district:"North",start:"2026-01-14",end:"2027-03-28",time:"See the parish team",venue:"Church of Our Lady Star of the Sea",addr:"",virtual:false,fee:"See registration",reg:"mailto:rcia.olss@hotmail.com",restrict:"Already begun — contact the team before turning up",cat:"Formation",source:"https://www.catechesis.org.sg/Programmes/RCIA/Seek",desc:"The parish's journey of Christian initiation for adults, begun on 14 January 2026. Journeys of this kind normally close at the following Easter; the end date shown here is the Easter Sunday after the start and was worked out, not published. Write to the team if you are thinking of joining a later intake.",tags:["Prayer"],initiation:true},
+{id:255,name:"RCIC 2026 intake — St Anne's Church",org:"St Anne's Church",orgType:"Parish",district:"Serangoon",start:"2026-02-28",end:"2027-03-28",time:"See the parish team",venue:"St Anne's Church",addr:"66 Sengkang East Way, Singapore 548593",virtual:false,fee:"See registration",reg:"mailto:Sac.catechist@catholic.org.sg",restrict:"Already begun — contact the team before turning up",cat:"Formation",source:"https://www.catechesis.org.sg/Programmes/RCIA/Seek",desc:"The parish's journey of Christian initiation for children, begun on 28 February 2026. Journeys of this kind normally close at the following Easter; the end date shown here is the Easter Sunday after the start and was worked out, not published. Write to the team if you are thinking of joining a later intake.",tags:["Prayer"],initiation:true},
 {id:191,name:"Bible Timeline 2026",org:"Church of St Teresa",orgType:"Parish",district:"City",start:"2026-04-08",end:"2026-09-30",time:"Wednesdays, 8:00pm – 10:00pm",venue:"Church of St Teresa (first and last sessions), otherwise Zoom",addr:"510 Kampong Bahru Road, Singapore 099446",virtual:true,fee:"See registration",reg:"https://tinyurl.com/BibleTL2026",restrict:"Registration closed on 31 January 2026",cat:"Formation",source:"https://biblicalapostolate.wordpress.com/news/",desc:"A twenty-five session journey through the whole sweep of salvation history, running from April to the end of September. The opening and closing sessions are in the church; the rest are on Zoom."},
+{id:264,name:"RCIA / OCIA 2026 intake — Blessed Sacrament Church",org:"Blessed Sacrament Church",orgType:"Parish",district:"West",start:"2026-04-30",end:"2027-03-28",time:"See the parish team",venue:"Blessed Sacrament Church",addr:"1 Commonwealth Drive, Singapore 149603",virtual:false,fee:"See registration",reg:"mailto:rcia.bsc@gmail.com",restrict:"Already begun — contact the team before turning up",cat:"Formation",source:"https://www.catechesis.org.sg/Programmes/RCIA/Seek",desc:"The parish's journey of Christian initiation for adults, begun on 30 April 2026. Journeys of this kind normally close at the following Easter; the end date shown here is the Easter Sunday after the start and was worked out, not published. Write to the team if you are thinking of joining a later intake.",tags:["Prayer"],initiation:true},
 {id:212,name:"Wednesday Wonderer Bible Study",org:"Church of St Ignatius",orgType:"Parish",district:"West",start:"2026-05-13",end:"2026-11-04",time:"Wednesdays, 9:30am – 12:00pm",venue:"Online (Zoom)",addr:"",virtual:true,fee:"See registration",reg:null,restrict:"Already under way since May. Contact Vivienne on 9785 2268 or Theresa on 9459 7557",cat:"Formation",source:"https://www.stignatius.org.sg/bible-studies",desc:"A long-running weekly Scripture study group meeting on Zoom on Wednesday mornings.",tags:["Talks & Conferences"]},
+{id:254,name:"RCIA / OCIA 2026 intake — Church of the Nativity of the BVM",org:"Church of the Nativity of the BVM",orgType:"Parish",district:"Serangoon",start:"2026-05-16",end:"2027-03-28",time:"See the parish team",venue:"Church of the Nativity of the BVM",addr:"",virtual:false,fee:"See registration",reg:"mailto:cnbvm.secretariat@catholic.org.sg",restrict:"Already begun — contact the team before turning up",cat:"Formation",source:"https://www.catechesis.org.sg/Programmes/RCIA/Seek",desc:"The parish's journey of Christian initiation for adults, begun on 16 May 2026. Journeys of this kind normally close at the following Easter; the end date shown here is the Easter Sunday after the start and was worked out, not published. Write to the team if you are thinking of joining a later intake.",tags:["Prayer"],initiation:true},
+{id:252,name:"RCIA / OCIA 2026 intake — Church of the Immaculate Heart of Mary",org:"Church of the Immaculate Heart of Mary",orgType:"Parish",district:"Serangoon",start:"2026-05-20",end:"2027-03-28",time:"See the parish team",venue:"Church of the Immaculate Heart of Mary",addr:"24 Highland Road, Singapore 549115",virtual:false,fee:"See registration",reg:"mailto:rcia@ihm.sg",restrict:"Already begun — contact the team before turning up",cat:"Formation",source:"https://www.catechesis.org.sg/Programmes/RCIA/Seek",desc:"The parish's journey of Christian initiation for adults, begun on 20 May 2026. Journeys of this kind normally close at the following Easter; the end date shown here is the Easter Sunday after the start and was worked out, not published. Write to the team if you are thinking of joining a later intake.",tags:["Prayer"],initiation:true},
 {id:209,name:"Benedictum — 100 Days of Prayer",org:"Jesus Youth Singapore",orgType:"Lay Ministry",district:"Various",start:"2026-05-25",end:"2026-09-01",time:"At least one hour on the day you choose",venue:"Before the Blessed Sacrament, wherever you are",addr:"",virtual:false,fee:"Free",reg:null,restrict:"",cat:"Prayer",source:"https://singapore.jesusyouth.org/benedictum/",desc:"A hundred days of intercession for Jesus Youth Singapore's 25th anniversary, in which each person takes one day and prays for at least an hour before the Blessed Sacrament."},
+{id:265,name:"RCIA / OCIA 2026 intake — Blessed Sacrament Church (Mandarin)",org:"Blessed Sacrament Church",orgType:"Parish",district:"West",start:"2026-06-01",end:"2027-03-28",time:"See the parish team",venue:"Blessed Sacrament Church",addr:"1 Commonwealth Drive, Singapore 149603",virtual:false,fee:"See registration",reg:"mailto:rcia.bsc@gmail.com",restrict:"Already begun — contact the team before turning up",cat:"Formation",source:"https://www.catechesis.org.sg/Programmes/RCIA/Seek",desc:"The parish's journey of Christian initiation for adults, begun on 1 June 2026. Journeys of this kind normally close at the following Easter; the end date shown here is the Easter Sunday after the start and was worked out, not published. Write to the team if you are thinking of joining a later intake.",lang:"Mandarin",tags:["Prayer"],initiation:true},
 {id:219,name:"CBN Leadership Programme — Journey with Christ",org:"Catholic Business Network",orgType:"Lay Ministry",district:"Various",start:"2026-06-02",end:"2026-09-19",time:"Tuesdays 6:30pm – 10:00pm, 15 weeks; closing retreat Saturday 19 September",venue:"Venue not published",addr:"",virtual:false,fee:"$1,000 corporate / $600 individual",reg:"https://zfrmz.com/imXK7KQxZmEW58AQdNyi",restrict:"Christian professionals aged 25–50 who lead a team or an organisation. Began in June; 75% attendance is required for certification",cat:"Formation",source:"https://www.cbn.sg/cbn-leadership-programme",desc:"A fifteen-week leadership formation programme for Christians in business, the public sector and non-profits, opening and closing with a full-day retreat.",tags:["Talks & Conferences","Fellowship"]},
+{id:259,name:"RCIA / OCIA 2026 intake — Church of Our Lady Queen of Peace",org:"Church of Our Lady Queen of Peace",orgType:"Parish",district:"East",start:"2026-06-07",end:"2027-03-28",time:"See the parish team",venue:"Church of Our Lady Queen of Peace",addr:"",virtual:false,fee:"See registration",reg:"mailto:teiktiong@yahoo.com",restrict:"Already begun — contact the team before turning up",cat:"Formation",source:"https://www.catechesis.org.sg/Programmes/RCIA/Seek",desc:"The parish's journey of Christian initiation for adults, begun on 7 June 2026. Journeys of this kind normally close at the following Easter; the end date shown here is the Easter Sunday after the start and was worked out, not published. Write to the team if you are thinking of joining a later intake.",tags:["Prayer"],initiation:true},
+{id:271,name:"RCIA / OCIA 2026 intake — Church of St Mary of the Angels (Mandarin)",org:"Church of St Mary of the Angels",orgType:"Parish",district:"West",start:"2026-06-07",end:"2027-03-28",time:"See the parish team",venue:"Church of St Mary of the Angels",addr:"5 Bukit Batok East Avenue 2, Singapore 659918",virtual:false,fee:"See registration",reg:"mailto:Mandarin.stmary@catholic.org.sg",restrict:"Already begun — contact the team before turning up",cat:"Formation",source:"https://www.catechesis.org.sg/Programmes/RCIA/Seek",desc:"The parish's journey of Christian initiation for adults, begun on 7 June 2026. Journeys of this kind normally close at the following Easter; the end date shown here is the Easter Sunday after the start and was worked out, not published. Write to the team if you are thinking of joining a later intake.",lang:"Mandarin",tags:["Prayer"],initiation:true},
+{id:251,name:"RCIY 2026 intake — Church of St Vincent de Paul",org:"Church of St Vincent de Paul",orgType:"Parish",district:"Serangoon",start:"2026-06-07",end:"2027-03-28",time:"See the parish team",venue:"Church of St Vincent de Paul",addr:"301 Yio Chu Kang Road, Singapore 805910",virtual:false,fee:"See registration",reg:"mailto:rciy.csvdp@catholic.org.sg",restrict:"Already begun — contact the team before turning up",cat:"Formation",source:"https://www.catechesis.org.sg/Programmes/RCIA/Seek",desc:"The parish's journey of Christian initiation for young people, begun on 7 June 2026. Journeys of this kind normally close at the following Easter; the end date shown here is the Easter Sunday after the start and was worked out, not published. Write to the team if you are thinking of joining a later intake.",tags:["Prayer"],initiation:true},
+{id:234,name:"RCIA / OCIA 2026 intake — Church of St Michael",org:"Church of St Michael",orgType:"Parish",district:"City",start:"2026-06-09",end:"2027-03-28",time:"See the parish team",venue:"Church of St Michael",addr:"17 St Michael's Road, Singapore 327976",virtual:false,fee:"See registration",reg:"mailto:csm.secretariat@catholic.org.sg",restrict:"Already begun — contact the team before turning up",cat:"Formation",source:"https://www.catechesis.org.sg/Programmes/RCIA/Seek",desc:"The parish's journey of Christian initiation for adults, begun on 9 June 2026. Journeys of this kind normally close at the following Easter; the end date shown here is the Easter Sunday after the start and was worked out, not published. Write to the team if you are thinking of joining a later intake.",tags:["Prayer"],initiation:true},
+{id:253,name:"RCIA / OCIA 2026 intake — Church of the Immaculate Heart of Mary (Mandarin)",org:"Church of the Immaculate Heart of Mary",orgType:"Parish",district:"Serangoon",start:"2026-06-13",end:"2027-03-28",time:"See the parish team",venue:"Church of the Immaculate Heart of Mary",addr:"24 Highland Road, Singapore 549115",virtual:false,fee:"See registration",reg:"mailto:rcia.chinese@ihm.sg",restrict:"Already begun — contact the team before turning up",cat:"Formation",source:"https://www.catechesis.org.sg/Programmes/RCIA/Seek",desc:"The parish's journey of Christian initiation for adults, begun on 13 June 2026. Journeys of this kind normally close at the following Easter; the end date shown here is the Easter Sunday after the start and was worked out, not published. Write to the team if you are thinking of joining a later intake.",lang:"Mandarin",tags:["Prayer"],initiation:true},
+{id:262,name:"RCIA / OCIA 2026 intake — Church of the Holy Trinity",org:"Church of the Holy Trinity",orgType:"Parish",district:"East",start:"2026-06-18",end:"2027-03-28",time:"See the parish team",venue:"Church of the Holy Trinity",addr:"20 Tampines Street 11, Singapore 529455",virtual:false,fee:"See registration",reg:"mailto:rcia@holytrinity.org.sg",restrict:"Already begun — contact the team before turning up",cat:"Formation",source:"https://www.catechesis.org.sg/Programmes/RCIA/Seek",desc:"The parish's journey of Christian initiation for adults, begun on 18 June 2026. Journeys of this kind normally close at the following Easter; the end date shown here is the Easter Sunday after the start and was worked out, not published. Write to the team if you are thinking of joining a later intake.",tags:["Prayer"],initiation:true},
+{id:258,name:"RCIA / OCIA 2026 intake — Church of Our Lady of Perpetual Succour (Mandarin)",org:"Church of Our Lady of Perpetual Succour",orgType:"Parish",district:"East",start:"2026-06-21",end:"2027-03-28",time:"See the parish team",venue:"Church of Our Lady of Perpetual Succour",addr:"31 Siglap Hill, Singapore 456085",virtual:false,fee:"See registration",reg:"mailto:mandarin_rcia@olps.sg",restrict:"Already begun — contact the team before turning up",cat:"Formation",source:"https://www.catechesis.org.sg/Programmes/RCIA/Seek",desc:"The parish's journey of Christian initiation for adults, begun on 21 June 2026. Journeys of this kind normally close at the following Easter; the end date shown here is the Easter Sunday after the start and was worked out, not published. Write to the team if you are thinking of joining a later intake.",lang:"Mandarin",tags:["Prayer"],initiation:true},
+{id:233,name:"RCIA / OCIA 2026 intake — Church of St Bernadette (Indonesian)",org:"Church of St Bernadette",orgType:"Parish",district:"City",start:"2026-06-21",end:"2027-03-28",time:"See the parish team",venue:"Church of St Bernadette",addr:"12 Zion Road, Singapore 247731",virtual:false,fee:"See registration",reg:"mailto:elvinatheresa@gmail.com",restrict:"Already begun — contact the team before turning up",cat:"Formation",source:"https://www.catechesis.org.sg/Programmes/RCIA/Seek",desc:"The parish's journey of Christian initiation for adults, begun on 21 June 2026. Journeys of this kind normally close at the following Easter; the end date shown here is the Easter Sunday after the start and was worked out, not published. Write to the team if you are thinking of joining a later intake.",lang:"Indonesian",tags:["Prayer"],initiation:true},
+{id:229,name:"RCIA / OCIA 2026 intake — Cathedral of the Good Shepherd",org:"Cathedral of the Good Shepherd",orgType:"Parish",district:"City",start:"2026-06-23",end:"2027-03-28",time:"See the parish team",venue:"Cathedral of the Good Shepherd",addr:"",virtual:false,fee:"See registration",reg:"mailto:cathedral.rcia@catholic.org.sg",restrict:"Already begun — contact the team before turning up",cat:"Formation",source:"https://www.catechesis.org.sg/Programmes/RCIA/Seek",desc:"The parish's journey of Christian initiation for adults, begun on 23 June 2026. Journeys of this kind normally close at the following Easter; the end date shown here is the Easter Sunday after the start and was worked out, not published. Write to the team if you are thinking of joining a later intake.",tags:["Prayer"],initiation:true},
+{id:236,name:"RCIA / OCIA 2026 intake — Church of Sts Peter and Paul",org:"Church of Sts Peter and Paul",orgType:"Parish",district:"City",start:"2026-06-23",end:"2027-03-28",time:"See the parish team",venue:"Church of Sts Peter and Paul",addr:"",virtual:false,fee:"See registration",reg:"mailto:cspp.rcia@catholic.org.sg",restrict:"Already begun — contact the team before turning up",cat:"Formation",source:"https://www.catechesis.org.sg/Programmes/RCIA/Seek",desc:"The parish's journey of Christian initiation for adults, begun on 23 June 2026. Journeys of this kind normally close at the following Easter; the end date shown here is the Easter Sunday after the start and was worked out, not published. Write to the team if you are thinking of joining a later intake.",tags:["Prayer"],initiation:true},
+{id:235,name:"RCIA / OCIA 2026 intake — Church of St Teresa",org:"Church of St Teresa",orgType:"Parish",district:"City",start:"2026-06-25",end:"2027-03-28",time:"See the parish team",venue:"Church of St Teresa",addr:"510 Kampong Bahru Road, Singapore 099446",virtual:false,fee:"See registration",reg:"mailto:rcia@stteresa.sg",restrict:"Already begun — contact the team before turning up",cat:"Formation",source:"https://www.catechesis.org.sg/Programmes/RCIA/Seek",desc:"The parish's journey of Christian initiation for adults, begun on 25 June 2026. Journeys of this kind normally close at the following Easter; the end date shown here is the Easter Sunday after the start and was worked out, not published. Write to the team if you are thinking of joining a later intake.",tags:["Prayer"],initiation:true},
+{id:257,name:"RCIA / OCIA 2026 intake — Church of Our Lady of Perpetual Succour",org:"Church of Our Lady of Perpetual Succour",orgType:"Parish",district:"East",start:"2026-06-28",end:"2027-03-28",time:"See the parish team",venue:"Church of Our Lady of Perpetual Succour",addr:"31 Siglap Hill, Singapore 456085",virtual:false,fee:"See registration",reg:"mailto:rcia@olps.sg",restrict:"Already begun — contact the team before turning up",cat:"Formation",source:"https://www.catechesis.org.sg/Programmes/RCIA/Seek",desc:"The parish's journey of Christian initiation for adults, begun on 28 June 2026. Journeys of this kind normally close at the following Easter; the end date shown here is the Easter Sunday after the start and was worked out, not published. Write to the team if you are thinking of joining a later intake.",tags:["Prayer"],initiation:true},
+{id:246,name:"RCIA / OCIA 2026 intake — St Joseph's Church (Bukit Timah)",org:"St Joseph's Church (Bukit Timah)",orgType:"Parish",district:"North",start:"2026-06-29",end:"2027-03-28",time:"See the parish team",venue:"St Joseph's Church (Bukit Timah)",addr:"620 Upper Bukit Timah Road, Singapore 678116",virtual:false,fee:"See registration",reg:"mailto:sjcbt.secretariat@catholic.org.sg",restrict:"Already begun — contact the team before turning up",cat:"Formation",source:"https://www.catechesis.org.sg/Programmes/RCIA/Seek",desc:"The parish's journey of Christian initiation for adults, begun on 29 June 2026. Journeys of this kind normally close at the following Easter; the end date shown here is the Easter Sunday after the start and was worked out, not published. Write to the team if you are thinking of joining a later intake.",tags:["Prayer"],initiation:true},
 {id:129,name:"Acts: The Spread of the Kingdom — Bible Study",org:"Church of the Risen Christ",orgType:"Parish",district:"North",start:"2026-06-30",end:"2026-11-10",time:"Tuesdays, 7:30pm – 9:30pm",venue:"Parish Hall, Church of the Risen Christ",addr:"91 Toa Payoh Central, Singapore 319193",virtual:false,fee:"$40 study kit; general sharing track free",reg:"https://www.risenchrist.org.sg/parish-updates",restrict:"",cat:"Formation",source:"https://www.risenchrist.org.sg/parish-updates",desc:"A twenty-week Jeff Cavins study on the Acts of the Apostles, with a study track and a lighter sharing track.",tags:["Prayer","Fellowship"]},
+{id:230,name:"RCIA / OCIA 2026 intake — Church of Our Lady of Lourdes",org:"Church of Our Lady of Lourdes",orgType:"Parish",district:"City",start:"2026-06-30",end:"2027-03-28",time:"See the parish team",venue:"Church of Our Lady of Lourdes",addr:"50 Ophir Road, Singapore 188690",virtual:false,fee:"See registration",reg:"mailto:colol@pastoral.catholic.org.sg",restrict:"Already begun — contact the team before turning up",cat:"Formation",source:"https://www.catechesis.org.sg/Programmes/RCIA/Seek",desc:"The parish's journey of Christian initiation for adults, begun on 30 June 2026. Journeys of this kind normally close at the following Easter; the end date shown here is the Easter Sunday after the start and was worked out, not published. Write to the team if you are thinking of joining a later intake.",tags:["Prayer"],initiation:true},
+{id:249,name:"RCIA / OCIA 2026 intake — Church of St Francis Xavier",org:"Church of St Francis Xavier",orgType:"Parish",district:"Serangoon",start:"2026-06-30",end:"2027-03-28",time:"See the parish team",venue:"Church of St Francis Xavier",addr:"",virtual:false,fee:"See registration",reg:"mailto:rcia@sfxchurch.sg",restrict:"Already begun — contact the team before turning up",cat:"Formation",source:"https://www.catechesis.org.sg/Programmes/RCIA/Seek",desc:"The parish's journey of Christian initiation for adults, begun on 30 June 2026. Journeys of this kind normally close at the following Easter; the end date shown here is the Easter Sunday after the start and was worked out, not published. Write to the team if you are thinking of joining a later intake.",tags:["Prayer"],initiation:true},
+{id:260,name:"RCIA / OCIA 2026 intake — Church of the Holy Family",org:"Church of the Holy Family",orgType:"Parish",district:"East",start:"2026-07-01",end:"2027-03-28",time:"See the parish team",venue:"Church of the Holy Family",addr:"",virtual:false,fee:"See registration",reg:"mailto:rcia@holyfamily.org.sg",restrict:"Already begun — contact the team before turning up",cat:"Formation",source:"https://www.catechesis.org.sg/Programmes/RCIA/Seek",desc:"The parish's journey of Christian initiation for adults, begun on 1 July 2026. Journeys of this kind normally close at the following Easter; the end date shown here is the Easter Sunday after the start and was worked out, not published. Write to the team if you are thinking of joining a later intake.",tags:["Prayer"],initiation:true},
+{id:242,name:"RCIA / OCIA 2026 intake — Church of the Holy Spirit",org:"Church of the Holy Spirit",orgType:"Parish",district:"North",start:"2026-07-02",end:"2027-03-28",time:"See the parish team",venue:"Church of the Holy Spirit",addr:"",virtual:false,fee:"See registration",reg:"mailto:chs.rcia@gmail.com",restrict:"Already begun — contact the team before turning up",cat:"Formation",source:"https://www.catechesis.org.sg/Programmes/RCIA/Seek",desc:"The parish's journey of Christian initiation for adults, begun on 2 July 2026. Journeys of this kind normally close at the following Easter; the end date shown here is the Easter Sunday after the start and was worked out, not published. Write to the team if you are thinking of joining a later intake.",tags:["Prayer"],initiation:true},
+{id:244,name:"RCIA / OCIA 2026 intake — Church of the Risen Christ (Mandarin)",org:"Church of the Risen Christ",orgType:"Parish",district:"North",start:"2026-07-03",end:"2027-03-28",time:"See the parish team",venue:"Church of the Risen Christ",addr:"91 Toa Payoh Central, Singapore 319193",virtual:false,fee:"See registration",reg:"mailto:pangchongeng@gmail.com",restrict:"Already begun — contact the team before turning up",cat:"Formation",source:"https://www.catechesis.org.sg/Programmes/RCIA/Seek",desc:"The parish's journey of Christian initiation for adults, begun on 3 July 2026. Journeys of this kind normally close at the following Easter; the end date shown here is the Easter Sunday after the start and was worked out, not published. Write to the team if you are thinking of joining a later intake.",lang:"Mandarin",tags:["Prayer"],initiation:true},
+{id:245,name:"RCIY 2026 intake — Church of the Risen Christ",org:"Church of the Risen Christ",orgType:"Parish",district:"North",start:"2026-07-03",end:"2027-03-28",time:"See the parish team",venue:"Church of the Risen Christ",addr:"91 Toa Payoh Central, Singapore 319193",virtual:false,fee:"See registration",reg:"mailto:crc.rciy@catholic.org.sg",restrict:"Already begun — contact the team before turning up",cat:"Formation",source:"https://www.catechesis.org.sg/Programmes/RCIA/Seek",desc:"The parish's journey of Christian initiation for young people, begun on 3 July 2026. Journeys of this kind normally close at the following Easter; the end date shown here is the Easter Sunday after the start and was worked out, not published. Write to the team if you are thinking of joining a later intake.",tags:["Prayer"],initiation:true},
+{id:261,name:"RCIY 2026 intake — Church of the Holy Family",org:"Church of the Holy Family",orgType:"Parish",district:"East",start:"2026-07-05",end:"2027-03-28",time:"See the parish team",venue:"Church of the Holy Family",addr:"",virtual:false,fee:"See registration",reg:"mailto:catechists@holyfamily.org.sg",restrict:"Already begun — contact the team before turning up",cat:"Formation",source:"https://www.catechesis.org.sg/Programmes/RCIA/Seek",desc:"The parish's journey of Christian initiation for young people, begun on 5 July 2026. Journeys of this kind normally close at the following Easter; the end date shown here is the Easter Sunday after the start and was worked out, not published. Write to the team if you are thinking of joining a later intake.",tags:["Prayer"],initiation:true},
+{id:240,name:"RCIA / OCIA 2026 intake — Church of Christ the King (Mandarin)",org:"Church of Christ the King",orgType:"Parish",district:"North",start:"2026-07-06",end:"2027-03-28",time:"See the parish team",venue:"Church of Christ the King",addr:"2221 Ang Mo Kio Avenue 8, Singapore 569809",virtual:false,fee:"See registration",reg:"mailto:dragontsk@gmail.com",restrict:"Already begun — contact the team before turning up",cat:"Formation",source:"https://www.catechesis.org.sg/Programmes/RCIA/Seek",desc:"The parish's journey of Christian initiation for adults, begun on 6 July 2026. Journeys of this kind normally close at the following Easter; the end date shown here is the Easter Sunday after the start and was worked out, not published. Write to the team if you are thinking of joining a later intake.",lang:"Mandarin",tags:["Prayer"],initiation:true},
+{id:231,name:"RCIA / OCIA 2026 intake — Novena Church (Church of St Alphonsus)",org:"Novena Church (Church of St Alphonsus)",orgType:"Parish",district:"City",start:"2026-07-06",end:"2027-03-28",time:"See the parish team",venue:"Novena Church (Church of St Alphonsus)",addr:"300 Thomson Road, Singapore 307653",virtual:false,fee:"See registration",reg:"mailto:rcianovena@gmail.com",restrict:"Already begun — contact the team before turning up",cat:"Formation",source:"https://www.catechesis.org.sg/Programmes/RCIA/Seek",desc:"The parish's journey of Christian initiation for adults, begun on 6 July 2026. Journeys of this kind normally close at the following Easter; the end date shown here is the Easter Sunday after the start and was worked out, not published. Write to the team if you are thinking of joining a later intake.",tags:["Prayer"],initiation:true},
 {id:189,name:"The Second Book of Kings",org:"Archdiocesan Biblical Apostolate",orgType:"Archdiocesan",district:"Online",start:"2026-07-06",end:"2026-09-28",time:"Mondays — live 8:00pm – 10:00pm, replay Fridays 9:30am – 11:30am",venue:"Online (Zoom)",addr:"",virtual:true,fee:"See registration",reg:"https://bit.ly/2026SecondKings",restrict:"Twelve sessions, already under way — ask before joining midway",cat:"Formation",source:"https://biblicalapostolate.wordpress.com/",desc:"Fr Ambrose Vaz works through the Second Book of Kings over twelve Monday evenings on Zoom, with a Friday morning replay. There is no session on 10 August.",tags:["Talks & Conferences"]},
 {id:188,name:"St Paul’s Letters, Part 1",org:"Archdiocesan Biblical Apostolate",orgType:"Archdiocesan",district:"Online",start:"2026-07-07",end:"2026-09-01",time:"Tuesdays — live 9:30am – 11:30am, replay 8:00pm – 10:00pm",venue:"Online (Zoom)",addr:"",virtual:true,fee:"See registration",reg:"https://bit.ly/2026StPaulPart1",restrict:"Nine sessions, already under way — ask before joining midway",cat:"Formation",source:"https://biblicalapostolate.wordpress.com/",desc:"Fr Ambrose Vaz leads a nine-session walk through the first half of St Paul’s letters, live on Zoom with an evening replay. The Zoom link is sent three days before each session.",tags:["Talks & Conferences"]},
 {id:190,name:"The Acts of the Apostles",org:"Church of Divine Mercy",orgType:"Parish",district:"East",start:"2026-07-07",end:"2026-10-06",time:"Tuesdays, 8:00pm – 10:00pm",venue:"Parish Hall (Level 2), Church of Divine Mercy",addr:"19 Pasir Ris Street 72, Singapore 518771",virtual:false,fee:"See registration",reg:"https://bit.ly/ActsBA?r=qr",restrict:"Already under way — ask before joining midway",cat:"Formation",source:"https://biblicalapostolate.wordpress.com/news/",desc:"Fr Eugene Vaz leads a Tuesday evening study of the Acts of the Apostles in the parish hall.",tags:["Talks & Conferences"]},
+{id:239,name:"RCIA / OCIA 2026 intake — Church of Christ the King",org:"Church of Christ the King",orgType:"Parish",district:"North",start:"2026-07-08",end:"2027-03-28",time:"See the parish team",venue:"Church of Christ the King",addr:"2221 Ang Mo Kio Avenue 8, Singapore 569809",virtual:false,fee:"See registration",reg:"mailto:query.rcia@gmail.com",restrict:"Already begun — contact the team before turning up",cat:"Formation",source:"https://www.catechesis.org.sg/Programmes/RCIA/Seek",desc:"The parish's journey of Christian initiation for adults, begun on 8 July 2026. Journeys of this kind normally close at the following Easter; the end date shown here is the Easter Sunday after the start and was worked out, not published. Write to the team if you are thinking of joining a later intake.",tags:["Prayer"],initiation:true},
+{id:272,name:"RCIA / OCIA 2026 intake — Church of the Holy Cross",org:"Church of the Holy Cross",orgType:"Parish",district:"West",start:"2026-07-09",end:"2027-03-28",time:"See the parish team",venue:"Church of the Holy Cross",addr:"450 Clementi Avenue 1, Singapore 129955",virtual:false,fee:"See registration",reg:"mailto:holycrosschurch.rcia@gmail.com",restrict:"Already begun — contact the team before turning up",cat:"Formation",source:"https://www.catechesis.org.sg/Programmes/RCIA/Seek",desc:"The parish's journey of Christian initiation for adults, begun on 9 July 2026. Journeys of this kind normally close at the following Easter; the end date shown here is the Easter Sunday after the start and was worked out, not published. Write to the team if you are thinking of joining a later intake.",tags:["Prayer"],initiation:true},
+{id:247,name:"RCIA / OCIA 2026 intake — St Joseph's Church (Bukit Timah) (Mandarin)",org:"St Joseph's Church (Bukit Timah)",orgType:"Parish",district:"North",start:"2026-07-09",end:"2027-03-28",time:"See the parish team",venue:"St Joseph's Church (Bukit Timah)",addr:"620 Upper Bukit Timah Road, Singapore 678116",virtual:false,fee:"See registration",reg:"mailto:eileen292@gmail.com",restrict:"Already begun — contact the team before turning up",cat:"Formation",source:"https://www.catechesis.org.sg/Programmes/RCIA/Seek",desc:"The parish's journey of Christian initiation for adults, begun on 9 July 2026. Journeys of this kind normally close at the following Easter; the end date shown here is the Easter Sunday after the start and was worked out, not published. Write to the team if you are thinking of joining a later intake.",lang:"Mandarin",tags:["Prayer"],initiation:true},
+{id:232,name:"RCIA / OCIA 2026 intake — Novena Church (Church of St Alphonsus) (Mandarin)",org:"Novena Church (Church of St Alphonsus)",orgType:"Parish",district:"City",start:"2026-07-11",end:"2027-03-28",time:"See the parish team",venue:"Novena Church (Church of St Alphonsus)",addr:"300 Thomson Road, Singapore 307653",virtual:false,fee:"See registration",reg:"mailto:chinesercia@novenachurch.com",restrict:"Already begun — contact the team before turning up",cat:"Formation",source:"https://www.catechesis.org.sg/Programmes/RCIA/Seek",desc:"The parish's journey of Christian initiation for adults, begun on 11 July 2026. Journeys of this kind normally close at the following Easter; the end date shown here is the Easter Sunday after the start and was worked out, not published. Write to the team if you are thinking of joining a later intake.",lang:"Mandarin",tags:["Prayer"],initiation:true},
+{id:250,name:"RCIY 2026 intake — Church of St Francis Xavier",org:"Church of St Francis Xavier",orgType:"Parish",district:"Serangoon",start:"2026-07-12",end:"2027-03-28",time:"See the parish team",venue:"Church of St Francis Xavier",addr:"",virtual:false,fee:"See registration",reg:"mailto:rciy@sfxchurch.sg",restrict:"Already begun — contact the team before turning up",cat:"Formation",source:"https://www.catechesis.org.sg/Programmes/RCIA/Seek",desc:"The parish's journey of Christian initiation for young people, begun on 12 July 2026. Journeys of this kind normally close at the following Easter; the end date shown here is the Easter Sunday after the start and was worked out, not published. Write to the team if you are thinking of joining a later intake.",tags:["Prayer"],initiation:true},
+{id:237,name:"RCIA / OCIA 2026 intake — Church of the Sacred Heart",org:"Church of the Sacred Heart",orgType:"Parish",district:"City",start:"2026-07-13",end:"2027-03-28",time:"See the parish team",venue:"Church of the Sacred Heart",addr:"",virtual:false,fee:"See registration",reg:"mailto:rcia@churchofthesacredheart.sg",restrict:"Already begun — contact the team before turning up",cat:"Formation",source:"https://www.catechesis.org.sg/Programmes/RCIA/Seek",desc:"The parish's journey of Christian initiation for adults, begun on 13 July 2026. Journeys of this kind normally close at the following Easter; the end date shown here is the Easter Sunday after the start and was worked out, not published. Write to the team if you are thinking of joining a later intake.",tags:["Prayer"],initiation:true},
 {id:211,name:"Initial Catechesis for Families, Adults and Youth",org:"Neocatechumenal Way Singapore",orgType:"Lay Ministry",district:"City",start:"2026-07-14",end:"2026-09-01",time:"Tuesdays and Fridays, 8:00pm",venue:"Church of St Bernadette",addr:"12 Zion Road, Singapore 247731",virtual:false,fee:"See registration",reg:null,restrict:"Open to families, adults and young people. Enquiries singaporencway@gmail.com",cat:"Formation",source:"https://www.ncwaysingapore.sg/announcement",desc:"A series of evening talks given twice a week by an itinerant catechetical team — the usual way a Neocatechumenal community begins in a parish.",tags:["Fellowship"]},
+{id:270,name:"RCIA / OCIA 2026 intake — Church of St Mary of the Angels",org:"Church of St Mary of the Angels",orgType:"Parish",district:"West",start:"2026-07-16",end:"2027-03-28",time:"See the parish team",venue:"Church of St Mary of the Angels",addr:"5 Bukit Batok East Avenue 2, Singapore 659918",virtual:false,fee:"See registration",reg:"mailto:rcia.stmary@catholic.org.sg",restrict:"Already begun — contact the team before turning up",cat:"Formation",source:"https://www.catechesis.org.sg/Programmes/RCIA/Seek",desc:"The parish's journey of Christian initiation for adults, begun on 16 July 2026. Journeys of this kind normally close at the following Easter; the end date shown here is the Easter Sunday after the start and was worked out, not published. Write to the team if you are thinking of joining a later intake.",tags:["Prayer"],initiation:true},
+{id:263,name:"RCIA / OCIA 2026 intake — Church of the Holy Trinity (Mandarin)",org:"Church of the Holy Trinity",orgType:"Parish",district:"East",start:"2026-07-20",end:"2027-03-28",time:"See the parish team",venue:"Church of the Holy Trinity",addr:"20 Tampines Street 11, Singapore 529455",virtual:false,fee:"See registration",reg:"mailto:rcia@holytrinity.org.sg",restrict:"Already begun — contact the team before turning up",cat:"Formation",source:"https://www.catechesis.org.sg/Programmes/RCIA/Seek",desc:"The parish's journey of Christian initiation for adults, begun on 20 July 2026. Journeys of this kind normally close at the following Easter; the end date shown here is the Easter Sunday after the start and was worked out, not published. Write to the team if you are thinking of joining a later intake.",lang:"Mandarin",tags:["Prayer"],initiation:true},
+{id:243,name:"RCIA / OCIA 2026 intake — Church of the Risen Christ",org:"Church of the Risen Christ",orgType:"Parish",district:"North",start:"2026-07-22",end:"2027-03-28",time:"See the parish team",venue:"Church of the Risen Christ",addr:"91 Toa Payoh Central, Singapore 319193",virtual:false,fee:"See registration",reg:"mailto:iwanttobeacatholic@catholic.org.sg",restrict:"Already begun — contact the team before turning up",cat:"Formation",source:"https://www.catechesis.org.sg/Programmes/RCIA/Seek",desc:"The parish's journey of Christian initiation for adults, begun on 22 July 2026. Journeys of this kind normally close at the following Easter; the end date shown here is the Easter Sunday after the start and was worked out, not published. Write to the team if you are thinking of joining a later intake.",tags:["Prayer"],initiation:true},
+{id:256,name:"RCIA / OCIA 2026 intake — Church of Divine Mercy",org:"Church of Divine Mercy",orgType:"Parish",district:"East",start:"2026-07-25",end:"2027-03-28",time:"See the parish team",venue:"Church of Divine Mercy",addr:"19 Pasir Ris Street 72, Singapore 518771",virtual:false,fee:"See registration",reg:"mailto:cdm.rcia@catholic.org.sg",restrict:"Already begun — contact the team before turning up",cat:"Formation",source:"https://www.catechesis.org.sg/Programmes/RCIA/Seek",desc:"The parish's journey of Christian initiation for adults, begun on 25 July 2026. Journeys of this kind normally close at the following Easter; the end date shown here is the Easter Sunday after the start and was worked out, not published. Write to the team if you are thinking of joining a later intake.",tags:["Prayer"],initiation:true},
 {id:79,name:"Life in the Spirit Seminar (LISS)",org:"Church of St Vincent de Paul",orgType:"Parish",district:"Serangoon",start:"2026-07-27",end:"2026-09-14",time:"Mondays, 8:00pm – 10:00pm",venue:"Church of St Vincent de Paul",addr:"301 Yio Chu Kang Road, Singapore 805910",virtual:false,fee:"Free",reg:"https://tinyurl.com/svdpLISS2026",restrict:"7-week programme",cat:"Formation",source:"https://t.me/s/svdpsg",desc:"A seven-week seminar on the gifts of the Holy Spirit, held on Monday evenings.",tags:["Prayer","Talks & Conferences"]},
+{id:268,name:"RCIA / OCIA 2026 intake — Church of St Ignatius",org:"Church of St Ignatius",orgType:"Parish",district:"West",start:"2026-07-28",end:"2027-03-28",time:"See the parish team",venue:"Church of St Ignatius",addr:"120 King's Road, Singapore 268172",virtual:false,fee:"See registration",reg:"mailto:rciastignatius@gmail.com",restrict:"Already begun — contact the team before turning up",cat:"Formation",source:"https://www.catechesis.org.sg/Programmes/RCIA/Seek",desc:"The parish's journey of Christian initiation for adults, begun on 28 July 2026. Journeys of this kind normally close at the following Easter; the end date shown here is the Easter Sunday after the start and was worked out, not published. Write to the team if you are thinking of joining a later intake.",tags:["Prayer"],initiation:true},
+{id:266,name:"RCIA / OCIA 2026 intake — Church of St Francis of Assisi",org:"Church of St Francis of Assisi",orgType:"Parish",district:"West",start:"2026-07-29",end:"2027-03-28",time:"See the parish team",venue:"Church of St Francis of Assisi",addr:"",virtual:false,fee:"See registration",reg:"mailto:administrator@csfa.sg",restrict:"Already begun — contact the team before turning up",cat:"Formation",source:"https://www.catechesis.org.sg/Programmes/RCIA/Seek",desc:"The parish's journey of Christian initiation for adults, begun on 29 July 2026. Journeys of this kind normally close at the following Easter; the end date shown here is the Easter Sunday after the start and was worked out, not published. Write to the team if you are thinking of joining a later intake.",tags:["Prayer"],initiation:true},
+{id:238,name:"RCIA / OCIA 2026 intake — St Joseph's Church (Victoria Street)",org:"St Joseph's Church (Victoria Street)",orgType:"Parish",district:"City",start:"2026-07-29",end:"2027-03-28",time:"See the parish team",venue:"St Joseph's Church (Victoria Street)",addr:"",virtual:false,fee:"See registration",reg:"mailto:sjc.comms@catholic.org.sg",restrict:"Already begun — contact the team before turning up",cat:"Formation",source:"https://www.catechesis.org.sg/Programmes/RCIA/Seek",desc:"The parish's journey of Christian initiation for adults, begun on 29 July 2026. Journeys of this kind normally close at the following Easter; the end date shown here is the Easter Sunday after the start and was worked out, not published. Write to the team if you are thinking of joining a later intake.",tags:["Prayer"],initiation:true},
 {id:82,name:"Gebirah Mission — Timor Leste",org:"Gebirah",orgType:"Mission Group",district:"Overseas",start:"2026-08-01",end:"2026-08-31",time:"August 2026 — exact dates to be confirmed",venue:"Timor Leste",addr:"Timor Leste",virtual:false,fee:"See registration",reg:"mailto:tan_tony@gebirah.org",restrict:"Contact the organiser for dates and eligibility",cat:"Overseas Mission",source:"https://charis-singapore.org/calendar/",desc:"Mission bringing aid to parish communities in Timor Leste affected by natural disaster.",tags:["Volunteer & Outreach"],datePrecision:"month"},
+{id:269,name:"RCIY 2026 intake — Church of St Ignatius",org:"Church of St Ignatius",orgType:"Parish",district:"West",start:"2026-08-01",end:"2027-03-28",time:"See the parish team",venue:"Church of St Ignatius",addr:"120 King's Road, Singapore 268172",virtual:false,fee:"See registration",reg:"mailto:rciastignatius@gmail.com",restrict:"Already begun — contact the team before turning up",cat:"Formation",source:"https://www.catechesis.org.sg/Programmes/RCIA/Seek",desc:"The parish's journey of Christian initiation for young people, begun on 1 August 2026. Journeys of this kind normally close at the following Easter; the end date shown here is the Easter Sunday after the start and was worked out, not published. Write to the team if you are thinking of joining a later intake.",tags:["Prayer"],initiation:true},
+{id:267,name:"RCIY 2026 intake — Church of St Francis of Assisi",org:"Church of St Francis of Assisi",orgType:"Parish",district:"West",start:"2026-08-02",end:"2027-03-28",time:"See the parish team",venue:"Church of St Francis of Assisi",addr:"",virtual:false,fee:"See registration",reg:"mailto:administrator@csfa.sg",restrict:"Already begun — contact the team before turning up",cat:"Formation",source:"https://www.catechesis.org.sg/Programmes/RCIA/Seek",desc:"The parish's journey of Christian initiation for young people, begun on 2 August 2026. Journeys of this kind normally close at the following Easter; the end date shown here is the Easter Sunday after the start and was worked out, not published. Write to the team if you are thinking of joining a later intake.",tags:["Prayer"],initiation:true},
+{id:248,name:"RCIY 2026 intake — Office for Young People",org:"Office for Young People",orgType:"Archdiocesan",district:"City",start:"2026-08-02",end:"2027-03-28",time:"See the parish team",venue:"Office for Young People",addr:"55 Waterloo Street, Singapore 187954",virtual:false,fee:"See registration",reg:"mailto:rciy.oyp@catholic.org.sg",restrict:"Already begun — contact the team before turning up",cat:"Formation",source:"https://www.catechesis.org.sg/Programmes/RCIA/Seek",desc:"The parish's journey of Christian initiation for young people, begun on 2 August 2026. Journeys of this kind normally close at the following Easter; the end date shown here is the Easter Sunday after the start and was worked out, not published. Write to the team if you are thinking of joining a later intake.",tags:["Prayer"],initiation:true},
 {id:15,name:"Landings Singapore 2026 — Church of the Holy Spirit",org:"Landings Singapore",orgType:"Lay Ministry",district:"North",start:"2026-08-12",end:"2026-10-19",time:"Mondays — the opening session was moved to Wednesday 12 August for the public holiday",venue:"Church of the Holy Spirit",addr:"248 Upper Thomson Road, Singapore 574371",virtual:false,fee:"Free",reg:"mailto:returning@landings.org.sg",restrict:"For Catholics who have drifted from the Church. The announcement gives one set of dates covering both churches — confirm the schedule for the one you choose",cat:"Formation",source:"https://new.divinemercy.sg/",desc:"A ten-week, non-judgmental journey for Catholics thinking about coming back — questions, the sacraments, and finding a place again. Landings runs at five parishes in all (the Cathedral, Holy Spirit, Our Lady of Perpetual Succour, Our Lady Queen of Peace and St Ignatius), each with its own coordinator, so runs start at different times in different places; landings.org.sg lists who to contact at each.",tags:["Fellowship"]},
 {id:195,name:"Landings Singapore 2026 — Our Lady Queen of Peace",org:"Landings Singapore",orgType:"Lay Ministry",district:"East",start:"2026-08-12",end:"2026-10-19",time:"Mondays — the opening session was moved to Wednesday 12 August for the public holiday",venue:"Church of Our Lady Queen of Peace",addr:"4 Sandy Lane, Singapore 437321",virtual:false,fee:"Free",reg:"mailto:returning@landings.org.sg",restrict:"For Catholics who have drifted from the Church. The announcement gives one set of dates covering both churches — confirm the schedule for the one you choose",cat:"Formation",source:"https://new.divinemercy.sg/",desc:"A ten-week, non-judgmental journey for Catholics thinking about coming back — questions, the sacraments, and finding a place again. Landings runs at five parishes in all (the Cathedral, Holy Spirit, Our Lady of Perpetual Succour, Our Lady Queen of Peace and St Ignatius), each with its own coordinator, so runs start at different times in different places; landings.org.sg lists who to contact at each.",tags:["Fellowship"]},
 {id:51,name:"[BCC] Sacraments",org:"Office for Catechesis",orgType:"Archdiocesan",district:"City",start:"2026-08-12",end:"2026-09-02",time:"12, 19, 26 Aug & 2 Sep",venue:"Office for Catechesis, Catholic Centre",addr:"55 Waterloo Street, Singapore 187954",virtual:false,fee:"See registration",reg:"https://www.catechesis.org.sg/courses-events",restrict:"Registration opens 1.5 months before start date",cat:"Formation",source:"https://www.catechesis.org.sg/courses-events",desc:"A module of the Basic Catechetical Course covering the seven sacraments.",tags:["Talks & Conferences"]},
@@ -624,14 +739,8 @@ const EVENTS = [
 {id:183,name:"Catholic Praying Mothers",org:"Church of the Holy Trinity",orgType:"Parish",district:"East",start:"2026-08-27",end:"2026-12-31",time:"Every Thursday, 10:00am – 12:00pm",venue:"Church of the Holy Trinity (Room 16)",addr:"20 Tampines Street 11, Singapore 529455",virtual:false,fee:"See registration",reg:null,restrict:"Open to mothers of the parish",cat:"Prayer",source:"https://holytrinity.org.sg/category/ministry/prayer-ministries/",desc:"A weekly prayer group for mothers, meeting in the parish. The group also visits aged homes each December to bring Christmas cheer.",recurring:true},
 {id:223,name:"Opus Dei Retreat, Johor Bahru — young women (Hillcrest)",org:"Opus Dei Singapore",orgType:"Lay Ministry",district:"Overseas",start:"2026-08-27",end:"2026-08-30",time:"Residential, Thursday to Sunday",venue:"Johor Bahru, Malaysia",addr:"Johor Bahru, Malaysia",virtual:false,fee:"See registration",reg:null,restrict:"Young women aged 17–30. Organised through Hillcrest — hgcconnect@gmail.com or WhatsApp 9108 8654",cat:"Retreat",source:"https://opusdei.org/en-sg/article/activities-in-singapore/",desc:"A residential silent retreat across the Causeway in Johor Bahru, run by Opus Dei for young people from Singapore.",tags:["Prayer","Formation"]},
 {id:41,name:"Marriage Encounter Weekend",org:"Worldwide Marriage Encounter Singapore",orgType:"CFL Affiliate",district:"Various",start:"2026-08-28",end:"2026-08-30",time:"Full weekend",venue:"Venue advised on registration",addr:"Singapore",virtual:false,fee:"See registration",reg:"https://www.wwmesg.org/Weekend_Reg",restrict:"For married couples",cat:"Marriage",source:"https://www.familylife.sg/UpcomingProgrammes",desc:"A residential weekend for married couples to deepen their communication and relationship.",tags:["Retreat"]},
-{id:68,name:"Accompaniment & Hope",org:"St Anne's Church",orgType:"Parish",district:"Serangoon",start:"2026-08-29",end:"2026-08-29",time:"See parish notice",venue:"St Anne's Church",addr:"66 Sengkang East Way, Singapore 548593",virtual:false,fee:"Free",reg:"https://tinyurl.com/sachopeaug2026",restrict:"",cat:"Formation",source:"https://stanne.catholic.sg/",desc:"A parish formation session on accompanying others pastorally.",tags:["Talks & Conferences"]},
-{id:198,name:"Anti-Scam Awareness Training (Mandarin)",org:"ACAMS — Commission for the Apostolate of Mandarin-speaking",orgType:"Archdiocesan",district:"City",start:"2026-08-29",end:"2026-08-29",time:"9:30am – 12:30pm",venue:"Bethany Hall, Church of Sts Peter and Paul",addr:"225A Queen Street, Singapore 188551",virtual:false,fee:"Free",reg:"https://acams.org.sg/acams/anti-scam-bb-aug26",restrict:"For Mandarin-speaking parishioners",cat:"Formation",source:"https://www.acams.org.sg/acams/events/event-calendar/event-details/6224/",desc:"An interactive anti-scam workshop run with the social enterprise Bamboo Builder, supported by Google.org and the Singapore Police Force.",lang:"Mandarin",tags:["Talks & Conferences"]},
-{id:228,name:"Assisi Dinner 2026 — “I am because We are”",org:"Assisi Hospice",orgType:"Mission Group",district:"City",start:"2026-08-29",end:"2026-08-29",time:"7:30pm – 10:00pm",venue:"Pan Pacific Singapore",addr:"7 Raffles Blvd, Singapore 039595",virtual:false,fee:"See registration",reg:null,restrict:"Guest of Honour: Mr Ong Ye Kung, Minister for Health. Neither the hospice's events page nor the event page publishes prices or a booking link — the page points to an external gala platform",cat:"Fundraising",source:"https://www.assisihospice.org.sg/events/assisi-dinner-2026/",desc:"Assisi Hospice's annual fundraising dinner, supporting its palliative care work.",tags:["Fellowship"]},
 {id:132,name:"Boys' Town Church Collection",org:"St Joseph's Church (Bukit Timah)",orgType:"Parish",district:"North",start:"2026-08-29",end:"2026-08-30",time:"At all Masses",venue:"St Joseph's Church (Bukit Timah)",addr:"620 Upper Bukit Timah Road, Singapore 678116",virtual:false,fee:"Free",reg:null,restrict:"",cat:"Fundraising",source:"https://stjoseph-bt.org.sg/",desc:"A weekend church collection in aid of Boys' Town.",tags:["Volunteer & Outreach"]},
-{id:139,name:"CERT Training — Responding to Fire in the Workplace",org:"Church of St Teresa",orgType:"Parish",district:"City",start:"2026-08-29",end:"2026-08-29",time:"9:00am – 6:00pm",venue:"Church of St Teresa",addr:"510 Kampong Bahru Road, Singapore 099446",virtual:false,fee:"See registration",reg:"https://www.stteresa.sg/cst-events-and-updates",restrict:"",cat:"Volunteer & Outreach",source:"https://www.stteresa.sg/cst-events-and-updates",desc:"Community Emergency Response Team training run by the parish emergency preparedness taskforce.",tags:["Formation"]},
 {id:75,name:"Living the Gospel — Sunday Readings",org:"Church of the Holy Cross",orgType:"Parish",district:"West",start:"2026-08-29",end:"2026-12-31",time:"Every Saturday, 9:30am – 11:00am",venue:"Church of the Holy Cross",addr:"450 Clementi Avenue 1, Singapore 129955",virtual:false,fee:"See registration",reg:null,restrict:"The parish site describes this as an online session while the Archdiocesan Biblical Apostolate lists it as in person on Saturday mornings — check with the contacts before setting out",cat:"Formation",source:"https://biblicalapostolate.wordpress.com/news/",desc:"A weekly group working through the coming Sunday’s Gospel. Contact George Chee on 9739 9216 or Mary Bay on 9696 5049.",recurring:true,tags:["Prayer"]},
-{id:66,name:"Parish Movie Screening",org:"Church of St Michael",orgType:"Parish",district:"City",start:"2026-08-29",end:"2026-08-29",time:"Evening",venue:"Church of St Michael",addr:"17 St Michael's Road, Singapore 327976",virtual:false,fee:"Free",reg:null,restrict:"",cat:"Fellowship",source:"https://stmichael.catholic.sg/",desc:"A parish film screening and discussion evening."},
-{id:40,name:"Walk with Caritas Family 2026",org:"Caritas Singapore & Catholic Family Life",orgType:"Archdiocesan",district:"South",start:"2026-08-29",end:"2026-08-29",time:"8:00am – 11:00am",venue:"Palawan Green, Sentosa",addr:"Palawan Green, Sentosa, Singapore",virtual:false,fee:"Registration fee goes directly to the charity you choose",reg:"https://www.bit.ly/wwcf26",restrict:"Families and friends of all ages. Guest of Honour: Minister Ong Ye Kung",cat:"Fellowship",source:"https://www.caritas-singapore.org/walk-with-caritas-family-2026/",desc:"An easy 4km walk followed by a carnival with live music, food and booths. Your registration fee goes directly to whichever of the 14 participating Caritas charities you choose.",tags:["Fundraising","Volunteer & Outreach"]},
 {id:52,name:"[FCC] Learning to Listen and Facilitate",org:"Office for Catechesis",orgType:"Archdiocesan",district:"City",start:"2026-08-29",end:"2026-09-21",time:"29 Aug, 14 & 21 Sep",venue:"Office for Catechesis, Catholic Centre",addr:"55 Waterloo Street, Singapore 187954",virtual:false,fee:"See registration",reg:"https://www.catechesis.org.sg/courses-events",restrict:"For catechists",cat:"Formation",source:"https://www.catechesis.org.sg/courses-events",desc:"A facilitation-skills module for catechists, on listening well and leading group discussion."},
 {id:199,name:"Theology of the Mass — Lecture 2: What the Mass Really Means",org:"ACAMS — Commission for the Apostolate of Mandarin-speaking",orgType:"Archdiocesan",district:"City",start:"2026-08-30",end:"2026-08-30",time:"1:30 – 4:30 (the notice prints AM, which looks like a slip for PM — check before going)",venue:"Parish Hall, Church of St Bernadette",addr:"12 Zion Road, Singapore 247731",virtual:false,fee:"Free; free-will offering welcome",reg:null,restrict:"Open to all — non-Catholic friends, catechumens and new Catholics expressly welcome. No registration; seating is limited, so come early",cat:"Formation",source:"https://www.acams.org.sg/acams/events/event-calendar/event-details/6261/",desc:"The second lecture in a Mandarin series on the theology of the Mass, aimed at deepening understanding of the Eucharist.",lang:"Mandarin",tags:["Talks & Conferences"]},
 {id:173,name:"From Where You Are To Where You Are Meant To Be",org:"Montfort Centre",orgType:"Mission Group",district:"West",start:"2026-08-31",end:"2026-08-31",time:"Details not published",venue:"Montfort Centre",addr:"624 Upper Bukit Timah Road, Singapore 678212",virtual:false,fee:"See registration",reg:null,restrict:"Time, fee and registration not published on the centre's site",cat:"Formation",source:"https://www.montfortcentre.org/events",desc:"A spiritual growth programme at Montfort Centre.",tags:["Retreat"]},
@@ -639,7 +748,7 @@ const EVENTS = [
 {id:88,name:"Cahaya Masa Depan — Batam Outreach",org:"Cahaya Masa Depan",orgType:"Mission Group",district:"Overseas",start:"2026-09-01",end:"2026-09-30",time:"September 2026 — exact dates to be confirmed",venue:"Batam, Indonesia",addr:"Batam, Indonesia",virtual:false,fee:"See registration",reg:"mailto:assomasadepan@gmail.com",restrict:"Contact the organiser",cat:"Overseas Mission",source:"https://charis-singapore.org/calendar/",desc:"Soup kitchen and health outreach serving slum communities in Batam.",tags:["Volunteer & Outreach"],datePrecision:"month"},
 {id:83,name:"Gebirah Mission — Ashiya, Japan",org:"Gebirah",orgType:"Mission Group",district:"Overseas",start:"2026-09-01",end:"2026-09-30",time:"September 2026 — exact dates to be confirmed",venue:"Ashiya, Japan",addr:"Ashiya, Japan",virtual:false,fee:"See registration",reg:"mailto:tan_tony@gebirah.org",restrict:"Contact the organiser for dates and eligibility",cat:"Overseas Mission",source:"https://charis-singapore.org/calendar/",desc:"Mission supporting elderly homeless and abandoned people in Ashiya, Japan.",tags:["Volunteer & Outreach"],datePrecision:"month"},
 {id:84,name:"Gebirah Mission — Penang, Malaysia",org:"Gebirah",orgType:"Mission Group",district:"Overseas",start:"2026-09-01",end:"2026-09-30",time:"September 2026 — exact dates to be confirmed",venue:"Penang, Malaysia",addr:"Penang, Malaysia",virtual:false,fee:"See registration",reg:"mailto:tan_tony@gebirah.org",restrict:"Contact the organiser for dates and eligibility",cat:"Overseas Mission",source:"https://charis-singapore.org/calendar/",desc:"Mission assisting a shelter caring for people living with HIV/AIDS in Penang.",tags:["Volunteer & Outreach"],datePrecision:"month"},
-{id:141,name:"Season of Creation 2026 — Opening",org:"Church of St Bernadette",orgType:"Parish",district:"City",start:"2026-09-01",end:"2026-09-01",time:"6:30pm",venue:"Church of St Bernadette",addr:"12 Zion Road, Singapore 247731",virtual:false,fee:"Free",reg:null,restrict:"",cat:"Prayer",source:"https://www.stbernadette.org.sg/csb-news-events",desc:"The parish opens the Season of Creation 2026.",tags:["Formation","Fellowship"]},
+{id:141,name:"Season of Creation 2026 — Opening",org:"Church of St Bernadette",orgType:"Parish",district:"City",start:"2026-09-01",end:"2026-09-01",time:"6:30pm",venue:"Church of St Bernadette",addr:"12 Zion Road, Singapore 247731",virtual:false,fee:"Free",reg:null,restrict:"",cat:"Mass",source:"https://www.stbernadette.org.sg/csb-news-events",desc:"The parish opens the Season of Creation 2026 with Mass.",tags:["Prayer","Fellowship"]},
 {id:11,name:"Season of Creation 2026 — “Living Water”",org:"Church of Divine Mercy",orgType:"Parish",district:"East",start:"2026-09-01",end:"2026-10-04",time:"Various",venue:"Church of Divine Mercy",addr:"19 Pasir Ris Street 72, Singapore 518771",virtual:false,fee:"Free",reg:"https://tinyurl.com/CDMSOC2026",restrict:"",cat:"Fellowship",source:"https://new.divinemercy.sg/",desc:"The parish's programme for the Church's Season of Creation, on the 2026 theme “Living Water” — talks, a nature walk, workshops and an eco-fair.",tags:["Formation","Prayer"]},
 {id:70,name:"Camino Challenge 2026",org:"ACMI — Archdiocesan Commission for Migrants",orgType:"Archdiocesan",district:"Various",start:"2026-09-02",end:"2026-10-13",time:"Ongoing challenge",venue:"Islandwide / virtual participation",addr:"Singapore",virtual:true,fee:"Donation-based",reg:"https://journeywith.acmi.org.sg",restrict:"Fundraising for migrant brothers and sisters",cat:"Fundraising",source:"https://acmi.org.sg/",desc:"A fundraising walking challenge in support of ACMI's work with migrant workers, joined individually or as a team.",tags:["Volunteer & Outreach","Pilgrimage"]},
 {id:97,name:"Catholic Foundation Dinner 2026",org:"Catholic Foundation",orgType:"Archdiocesan",district:"City",start:"2026-09-02",end:"2026-09-02",time:"5:30pm cocktails & Angelico Art Award exhibition · 7:00pm dinner reception",venue:"The Fullerton Hotel Ballroom",addr:"1 Fullerton Square, Singapore 049178",virtual:false,fee:"Tables fully taken up for 2026; individual contributions still welcome",reg:"mailto:cfdinner@catholic.org.sg",restrict:"Guest of Honour: Cardinal William Goh. All tables are taken — individual contributions are still accepted",cat:"Fundraising",source:"https://www.catholicfoundation.sg/cfdinner",desc:"The Foundation's annual fundraising dinner, this year supporting construction of the Catholic Hub. Includes the Angelico Art Award exhibition and a silent eAuction.",tags:["Fellowship"]},
@@ -683,6 +792,7 @@ const EVENTS = [
 {id:12,name:"Beauty from Ashes: A Walk of Restoration",org:"Church of Divine Mercy",orgType:"Parish",district:"East",start:"2026-09-12",end:"2026-09-12",time:"7:00am – 10:00am",venue:"Sungei Api Api to Lorong Halus Wetland",addr:"Lorong Halus Wetland, Singapore",virtual:false,fee:"Free",reg:"https://tinyurl.com/CDMSOC2026",restrict:"Guided by Dr Maxine Mowe (NUS)",cat:"Fellowship",source:"https://new.divinemercy.sg/",desc:"A guided morning walk along Sungei Api Api to Lorong Halus Wetland, reflecting on ecological restoration.",tags:["Formation"]},
 {id:118,name:"Becoming Truly Myself: Praying My Personal Vocation",org:"Cenacle Mission Singapore",orgType:"Mission Group",district:"Various",start:"2026-09-12",end:"2026-09-13",time:"Stay-in retreat",venue:"SFX Retreat Centre",addr:"Singapore",virtual:false,fee:"See registration",reg:null,restrict:"For adults",cat:"Retreat",source:"https://ststephen.sg/",desc:"A stay-in retreat for adults exploring their personal vocation, run by the Cenacle Sisters.",tags:["Formation","Prayer"]},
 {id:46,name:"Catholic Engaged Encounter Weekend",org:"Catholic Engaged Encounter",orgType:"CFL Affiliate",district:"Various",start:"2026-09-12",end:"2026-09-13",time:"Full weekend",venue:"Venue advised on registration",addr:"Singapore",virtual:false,fee:"See registration",reg:"https://cee.familylife.sg/Programme",restrict:"For engaged couples",cat:"Marriage",source:"https://www.familylife.sg/EventsOverview",desc:"A preparation weekend for engaged couples, focused on honest conversation before marriage.",tags:["Retreat","Formation"]},
+{id:285,name:"EGCC Youth Builder",org:"Empower Generation Catholic Charismatic (EGCC)",orgType:"Lay Ministry",district:"Various",start:"2026-09-12",end:"2026-12-31",time:"Saturdays 1:15pm – 4:00pm, except the first Saturday of the month",venue:"Venue varies — see the community",addr:"",virtual:false,fee:"See registration",reg:"mailto:egcc.sg@gmail.com",restrict:"Single young adults aged 20–35",cat:"Fellowship",source:"https://www.catholic.sg/event/egccyb/2027-05-29/",desc:"A weekly gathering for single young adults — praise and worship, sharing, faith formation and fellowship, mostly in Bahasa Indonesia.",recurring:true,lang:"Indonesian",tags:["Youth","Prayer"]},
 {id:203,name:"GPS to Love",org:"ACAMS — Commission for the Apostolate of Mandarin-speaking",orgType:"Archdiocesan",district:"City",start:"2026-09-12",end:"2026-09-12",time:"10:00am – 2:00pm",venue:"Level 1 Parish Hall, Church of St Bernadette",addr:"12 Zion Road, Singapore 247731",virtual:false,fee:"$15",reg:"https://acams.org.sg/acams/2026-gps-for-love",restrict:"Open to all. WhatsApp enquiries 9122 8698",cat:"Formation",source:"https://www.acams.org.sg/acams/events/event-calendar/event-details/6228/",desc:"A half-day session on two questions about love — how to understand it, and how to find your way through it.",lang:"Mandarin",tags:["Talks & Conferences","Marriage"]},
 {id:149,name:"Laudato Si' Vegetarian Breakfast",org:"Church of St Michael",orgType:"Parish",district:"City",start:"2026-09-12",end:"2026-09-12",time:"10:30am – 11:30am",venue:"Michael's Patio",addr:"17 St Michael's Road, Singapore 327976",virtual:false,fee:"See registration",reg:null,restrict:"",cat:"Fellowship",source:"https://stmichael.catholic.sg/events/category/calendar/",desc:"A monthly vegetarian breakfast after the 9.30am Mass, inspired by Laudato Si'.",tags:["Formation"]},
 {id:113,name:"OLPS Youth Rally 2026",org:"Church of Our Lady of Perpetual Succour",orgType:"Parish",district:"East",start:"2026-09-12",end:"2026-09-12",time:"5:00pm – 10:30pm",venue:"Church of Our Lady of Perpetual Succour",addr:"31 Siglap Hill, Singapore 456085",virtual:false,fee:"See registration",reg:"https://forms.gle/U25a73cJ49RvVMc6A",restrict:"Ages 15–35, all welcome",cat:"Youth",source:"https://olps.sg/events/youth-rally-2026/",desc:"A youth rally on the parish's 65th anniversary theme “Let it be done to me”, with testimonies, Mass, dinner, worship and adoration led by Fr Marcus Chew.",tags:["Fellowship","Prayer","Talks & Conferences"]},
@@ -711,31 +821,33 @@ const EVENTS = [
 {id:159,name:"PSLE Exam Mass and Prayer Sessions",org:"Church of St Ignatius",orgType:"Parish",district:"West",start:"2026-09-24",end:"2026-09-30",time:"Mass 24 Sep; prayer sessions 25, 28, 29, 30 Sep, 8:15am – 9:00am",venue:"Annexe Hall, Church of St Ignatius",addr:"120 King's Road, Singapore 268172",virtual:false,fee:"Free",reg:"https://qrfy.io/?WsKMQgzgTV",restrict:"For students sitting the PSLE and their families",cat:"Mass",source:"https://t.me/s/stiggys",desc:"A Mass and follow-up morning prayer sessions for students sitting the PSLE.",tags:["Prayer","Youth"]},
 {id:181,name:"CBN Connect — Leadership: What's Love Got To Do With It?",org:"Catholic Business Network",orgType:"Lay Ministry",district:"Various",start:"2026-09-25",end:"2026-09-25",time:"9:00am – 12:00pm",venue:"Venue not published",addr:"Singapore",virtual:false,fee:"See registration",reg:"https://zfrmz.com/jB0orT9hwGM4zEJWCHBV",restrict:"",cat:"Talks & Conferences",source:"https://www.cbn.sg/cbn-connect",desc:"A fireside chat with Mickey Connolly on how faith values meet modern leadership and workplace culture.",tags:["Formation","Fellowship"]},
 {id:127,name:"Discover the Catholic Faith — Talk 2: The True Church",org:"Church of St Anthony",orgType:"Parish",district:"North",start:"2026-09-25",end:"2026-09-25",time:"7:30pm – 9:30pm",venue:"Auditorium, Church of St Anthony",addr:"25 Woodlands Avenue 1, Singapore 739064",virtual:false,fee:"See registration",reg:"https://bit.ly/4gqEVMs",restrict:"",cat:"Talks & Conferences",source:"https://saint-anthony.org/",desc:"Second of a two-part series introducing the Catholic faith, on the nature of the Church.",tags:["Formation"]},
-{id:45,name:"Retrouvaille Weekend",org:"Retrouvaille Singapore",orgType:"CFL Affiliate",district:"Various",start:"2026-09-25",end:"2026-09-27",time:"Full weekend",venue:"Venue advised on registration",addr:"Singapore",virtual:false,fee:"See registration",reg:"https://www.familylife.sg/Retrouvaille",restrict:"For couples in difficulty, considering separation, or seeking reconciliation",cat:"Marriage",source:"https://www.familylife.sg/UpcomingProgrammes",desc:"A weekend programme for married couples in serious difficulty, including those separated or considering divorce.",tags:["Retreat","Support Group"]},
+{id:45,name:"Retrouvaille Weekend",org:"Retrouvaille Singapore",orgType:"CFL Affiliate",district:"Various",start:"2026-09-25",end:"2026-09-27",time:"Full weekend",venue:"ME House",addr:"201-B Punggol Seventeenth Avenue, Singapore 829651",virtual:false,fee:"See registration",reg:"https://www.familylife.sg/Retrouvaille",restrict:"For couples in difficulty, considering separation, or seeking reconciliation",cat:"Marriage",source:"https://www.familylife.sg/UpcomingProgrammes",desc:"A weekend programme for married couples in serious difficulty, including those separated or considering divorce.",tags:["Retreat","Support Group"]},
 {id:109,name:"DML 2.0 Fundraising Dinner",org:"Catholic Family Life",orgType:"Archdiocesan",district:"City",start:"2026-09-26",end:"2026-09-26",time:"7:00pm",venue:"Orchard Hotel Singapore",addr:"442 Orchard Road, Singapore 238879",virtual:false,fee:"All tables sold out; donations still accepted",reg:"https://www.familylife.sg/DML2026",restrict:"SOLD OUT — all tables taken. Donations of $50 and above qualify for 250% tax deduction",cat:"Fundraising",source:"https://www.familylife.sg/DML2026",desc:"Catholic Family Life's fundraising dinner, bringing together supporters of its work with engaged couples, married couples, parents and families in crisis.",tags:["Fellowship","Marriage"]},
 {id:204,name:"Learning from Jesus — Leadership Course (4th run)",org:"ACAMS — Commission for the Apostolate of Mandarin-speaking",orgType:"Archdiocesan",district:"North",start:"2026-09-26",end:"2026-10-03",time:"Two Saturdays, 9:00am – 4:00pm",venue:"MPR2, Level 3, Caritas Agape Village",addr:"7A Lorong 8 Toa Payoh, #03-06, Singapore 319264",virtual:false,fee:"$180 including GST, course materials and lunch",reg:"https://docs.google.com/forms/d/e/1FAIpQLSeMBuh8aOo6aPe3nBB25esIuCxy0JmQoc0IIjtVKIGKJJ3eNA/viewform",restrict:"",cat:"Formation",source:"https://www.acams.org.sg/acams/events/event-calendar/event-details/6213/",desc:"A Christian leadership formation course held over two Saturdays, now in its fourth run.",lang:"Mandarin",tags:["Talks & Conferences"]},
 {id:160,name:"OCEANS Documentary Screening",org:"Church of St Ignatius",orgType:"Parish",district:"West",start:"2026-09-26",end:"2026-09-26",time:"See parish notice",venue:"St Ignatius Hall",addr:"120 King's Road, Singapore 268172",virtual:false,fee:"See registration",reg:null,restrict:"",cat:"Talks & Conferences",source:"https://t.me/s/stiggys",desc:"A documentary screening on ocean conservation and care for creation.",tags:["Formation"]},
 {id:61,name:"Parish Assembly 2026 — “Building Our Future Together”",org:"Church of the Immaculate Heart of Mary",orgType:"Parish",district:"Serangoon",start:"2026-09-26",end:"2026-09-26",time:"See parish notice",venue:"Church of the Immaculate Heart of Mary",addr:"24 Highland Road, Singapore 549115",virtual:false,fee:"Free",reg:"https://bit.ly/4yTFOVb",restrict:"",cat:"Fellowship",source:"https://ihm.sg/whats-on/",desc:"The parish's annual assembly, on the theme “Building Our Future Together”."},
-{id:164,name:"Prayer 101 — An Introduction to Silence and Prayer",org:"Kingsmead Centre",orgType:"Mission Group",district:"West",start:"2026-09-26",end:"2026-09-27",time:"Saturday 10:00am – Sunday 1:00pm",venue:"Kingsmead Centre",addr:"8 Victoria Park Road, Singapore",virtual:false,fee:"$100 per person, including accommodation and meals",reg:"https://bit.ly/p101sep2026",restrict:"Facilitated by Fr Jerome Leon SJ",cat:"Retreat",source:"https://t.me/s/stiggys",desc:"An introduction to silence and Ignatian prayer.",tags:["Prayer","Formation"]},
+{id:164,name:"Prayer 101 — An Introduction to Silence and Prayer",org:"Kingsmead Centre",orgType:"Mission Group",district:"West",start:"2026-09-26",end:"2026-09-27",time:"Saturday 10:00am – Sunday 1:00pm",venue:"Kingsmead Centre",addr:"8 Victoria Park Road, Singapore 266492",virtual:false,fee:"$100 per person, including accommodation and meals",reg:"https://bit.ly/p101sep2026",restrict:"Facilitated by Fr Jerome Leon SJ",cat:"Retreat",source:"https://t.me/s/stiggys",desc:"An introduction to silence and Ignatian prayer.",tags:["Prayer","Formation"]},
 {id:67,name:"Sacristy to Sanctuary",org:"St Anne's Church",orgType:"Parish",district:"Serangoon",start:"2026-09-26",end:"2026-09-26",time:"See parish notice",venue:"St Anne's Church",addr:"66 Sengkang East Way, Singapore 548593",virtual:false,fee:"Free",reg:"https://docs.google.com/forms/d/e/1FAIpQLSceunEGy4ndD8kd3mZm31ig1XaDjnSXTHQkrvTcoVlDyiZTLA/viewform",restrict:"",cat:"Formation",source:"https://stanne.catholic.sg/",desc:"A formation session for those who serve in the sacristy and sanctuary.",tags:["Talks & Conferences"]},
 {id:151,name:"Stroke Prevention Talk",org:"Church of St Bernadette",orgType:"Parish",district:"City",start:"2026-09-26",end:"2026-09-26",time:"3:00pm – 5:00pm",venue:"Multi-Purpose Hall, Church of St Bernadette",addr:"12 Zion Road, Singapore 247731",virtual:false,fee:"Free",reg:"https://www.stbernadette.org.sg/csb-news-events",restrict:"Free but registration required",cat:"Talks & Conferences",source:"https://www.stbernadette.org.sg/csb-news-events",desc:"A health awareness talk on preventing stroke.",tags:["Support Group","Volunteer & Outreach"]},
 {id:64,name:"Migrant Eucharistic Adoration — “Little Seeds, Big Faith”",org:"Novena Church (Church of St Alphonsus)",orgType:"Parish",district:"City",start:"2026-09-27",end:"2026-09-27",time:"2:00pm – 3:30pm",venue:"Novena Church",addr:"300 Thomson Road, Singapore 307653",virtual:false,fee:"Free",reg:"https://novenachurch.com/events/migrant-eucharistic-adoration-little-seeds-big-faith/",restrict:"Migrant community especially welcome",cat:"Prayer",source:"https://novenachurch.com/events/",desc:"A time of Eucharistic adoration with and for Singapore's migrant community.",tags:["Volunteer & Outreach"]},
 {id:169,name:"Franciscan Golf & Dinner",org:"Church of St Mary of the Angels",orgType:"Parish",district:"Various",start:"2026-09-29",end:"2026-09-29",time:"See registration",venue:"Singapore Island Country Club",addr:"Singapore Island Country Club, Singapore",virtual:false,fee:"See registration",reg:null,restrict:"Cost and booking not published on the parish site",cat:"Fundraising",source:"https://www.stmary.sg/whatson",desc:"A Franciscan Jubilee golf day and dinner in aid of the parish.",tags:["Fellowship"]},
 {id:115,name:"CaFE: Head to Heart",org:"Church of St Stephen",orgType:"Parish",district:"East",start:"2026-09-30",end:"2026-10-14",time:"Wednesdays, 7:30pm – 9:00pm",venue:"Multipurpose Hall, Church of St Stephen",addr:"30 Sallim Road, Singapore 387639",virtual:false,fee:"See registration",reg:"https://forms.gle/wJ1MjvJSt5g91hYx9",restrict:"",cat:"Formation",source:"https://ststephen.sg/",desc:"A three-session Catholic Faith Exploration series on experiencing God's love more personally.",tags:["Talks & Conferences","Fellowship"]},
-{id:56,name:"[FCC] Intro to Catechetical Pedagogy & Methods (2nd run, evening)",org:"Office for Catechesis",orgType:"Archdiocesan",district:"City",start:"2026-09-30",end:"2026-11-18",time:"Evenings, 8 sessions",venue:"Office for Catechesis, Catholic Centre",addr:"55 Waterloo Street, Singapore 187954",virtual:false,fee:"See registration",reg:"https://www.catechesis.org.sg/courses-events",restrict:"For catechists",cat:"Formation",source:"https://www.catechesis.org.sg/courses-events",desc:"The evening run of the introductory course in catechetical teaching methods, over eight sessions."},
+{id:56,name:"[FCC] Intro to Catechetical Pedagogy & Methods (2nd run, evening)",org:"Office for Catechesis",orgType:"Archdiocesan",district:"City",start:"2026-09-30",end:"2026-11-18",time:"Evenings, 8 sessions",venue:"Church of St Vincent de Paul",addr:"301 Yio Chu Kang Road, Singapore 805910",virtual:false,fee:"See registration",reg:"https://www.catechesis.org.sg/courses-events",restrict:"For catechists",cat:"Formation",source:"https://www.catechesis.org.sg/courses-events",desc:"The evening run of the introductory course in catechetical teaching methods, over eight sessions."},
 {id:220,name:"Opus Dei Retreat, Johor Bahru — young men",org:"Opus Dei Singapore",orgType:"Lay Ministry",district:"Overseas",start:"2026-10-01",end:"2026-10-04",time:"Residential, Thursday to Sunday",venue:"Johor Bahru, Malaysia",addr:"Johor Bahru, Malaysia",virtual:false,fee:"See registration",reg:"https://docs.google.com/forms/d/1ZsM1Kbtqzm9FqRdM3JKgjI0f8p6o76RA5OJnzOKiCO0/preview",restrict:"Young men aged 17–25",cat:"Retreat",source:"https://opusdei.org/en-sg/article/activities-in-singapore/",desc:"A residential silent retreat across the Causeway in Johor Bahru, run by Opus Dei for young people from Singapore.",tags:["Prayer","Formation"]},
 {id:6,name:"65th Anniversary Votive Masses — The Parish",org:"Church of Our Lady of Perpetual Succour",orgType:"Parish",district:"East",start:"2026-10-02",end:"2026-10-02",time:"8:00pm",venue:"OLPS Church",addr:"31 Siglap Hill, Singapore 456085",virtual:false,fee:"Free",reg:null,restrict:"",cat:"Mass",source:"https://olps.sg/events/65th-anniversary-celebrations-votive-masses/",desc:"Votive Mass in the parish's 65th anniversary series, offered for the parish community."},
 {id:152,name:"Creation and the Franciscan Vision — Session 1",org:"Church of St Bernadette",orgType:"Parish",district:"City",start:"2026-10-02",end:"2026-10-02",time:"8:00pm",venue:"Parish Hall, Church of St Bernadette",addr:"12 Zion Road, Singapore 247731",virtual:false,fee:"See registration",reg:null,restrict:"Presented by Fr Joe Nathan OFM",cat:"Talks & Conferences",source:"https://www.stbernadette.org.sg/csb-news-events",desc:"First of a two-part talk on creation seen through the Franciscan tradition.",tags:["Formation","Prayer"]},
+{id:273,name:"Franciscan Jamboree 2026 — Magnifica Humanitas",org:"Franciscan Young Adults (Fraternitas)",orgType:"Lay Ministry",district:"East",start:"2026-10-02",end:"2026-10-04",time:"Fri 6:30pm – Sun 2:00pm",venue:"Lasalle House",addr:"490 East Coast Road, Singapore 429058",virtual:false,fee:"See registration",reg:"mailto:fraternitas.sg@gmail.com",restrict:"",cat:"Retreat",source:"https://www.catholic.sg/event/fjmh/",desc:"A Franciscan young adults' retreat on Pope Leo XIV's encyclical Magnifica Humanitas, marking the 800th year of the Transitus of St Francis, with a celebration alongside the wider Franciscan community.",tags:["Youth","Fellowship"]},
 {id:213,name:"Marriage Encounter Weekend (October)",org:"Worldwide Marriage Encounter Singapore",orgType:"CFL Affiliate",district:"Various",start:"2026-10-02",end:"2026-10-04",time:"Full weekend",venue:"Venue advised on registration",addr:"Singapore",virtual:false,fee:"See registration",reg:"https://www.stmary.sg/archdiocese/me-weekend",restrict:"For married couples",cat:"Marriage",source:"https://t.me/s/stmarysg",desc:"A residential weekend for married couples to deepen their communication and their relationship.",tags:["Retreat"]},
 {id:19,name:"Prayer Experience Retreat #42",org:"Catholic Spirituality Centre",orgType:"Archdiocesan",district:"Serangoon",start:"2026-10-02",end:"2026-10-04",time:"8:30am – 6:45pm daily",venue:"Catholic Spirituality Centre",addr:"1261 Upper Serangoon Road, Singapore 534796",virtual:false,fee:"$163.50 non-residential / $218.00 residential",reg:"https://bit.ly/cscper42",restrict:"Registration closes 23 Sep 2026. Conducted by Juliana Koh & CSC Retreat Team",cat:"Retreat",source:"https://t.me/s/csctr",desc:"A three-day retreat on deepening personal prayer, offered residentially or non-residentially.",tags:["Prayer"]},
 {id:122,name:"God, Money & Me — Course",org:"Catholic Foundation",orgType:"Archdiocesan",district:"City",start:"2026-10-03",end:"2026-10-31",time:"Saturdays, 9:00am – 1:00pm",venue:"Catholic Centre",addr:"55 Waterloo Street, Singapore 187954",virtual:false,fee:"See registration",reg:"https://catholicfoundation.sg/god-money-and-me",restrict:"",cat:"Formation",source:"https://catholicfoundation.sg/god-money-and-me",desc:"Five Saturday sessions on Catholic principles for financial decision-making.",tags:["Talks & Conferences"]},
+{id:274,name:"Lead Like Jesus (Mandarin)",org:"Catholic Leadership Centre (CLC)",orgType:"Archdiocesan",district:"North",start:"2026-10-03",end:"2026-10-03",time:"9:00am – 4:00pm",venue:"Agape Village",addr:"7A Lorong 8 Toa Payoh, Singapore 319264",virtual:false,fee:"See registration",reg:"mailto:enquiry.clc@catholic.org.sg",restrict:"",cat:"Formation",source:"https://www.catholic.sg/event/llj/2026-10-03/",desc:"A two-session leadership workshop in Mandarin built on the servant leadership of Christ — heart, head, hands and habits.",lang:"Mandarin",tags:["Talks & Conferences"]},
 {id:69,name:"To Jesus, Through Mary",org:"St Anne's Church",orgType:"Parish",district:"Serangoon",start:"2026-10-03",end:"2026-10-03",time:"See parish notice",venue:"St Anne's Church",addr:"66 Sengkang East Way, Singapore 548593",virtual:false,fee:"See registration",reg:"https://tinyurl.com/montforttcmsac26",restrict:"",cat:"Formation",source:"https://stanne.catholic.sg/",desc:"A Montfortian formation programme on consecration to Jesus through Mary.",tags:["Prayer","Talks & Conferences"]},
-{id:205,name:"Marriage Preparation Course (Mandarin)",org:"ACAMS — Commission for the Apostolate of Mandarin-speaking",orgType:"Archdiocesan",district:"City",start:"2026-10-04",end:"2026-10-11",time:"Two Sundays, 9:00am – 5:00pm",venue:"Catholic Centre",addr:"55 Waterloo Street, Singapore 187954",virtual:false,fee:"$220 per couple",reg:null,restrict:"For couples preparing for marriage. Registration is by the QR code on the ACAMS event page",cat:"Marriage",source:"https://www.acams.org.sg/acams/event-page/event-details/6222/-/2026-hua-wen-hun-qian-yu-bei-ban-10yue4ri-10yue11ri",desc:"The Mandarin-language marriage preparation course, run over two Sundays.",lang:"Mandarin",tags:["Formation"]},
+{id:205,name:"Marriage Preparation Course (Mandarin)",org:"ACAMS — Commission for the Apostolate of Mandarin-speaking",orgType:"Archdiocesan",district:"City",start:"2026-10-04",end:"2026-10-11",time:"Two Sundays, 9:00am – 5:00pm",venue:"Catholic Centre",addr:"55 Waterloo Street, Singapore 187954",virtual:false,fee:"$220 per couple",reg:null,restrict:"Sources disagree on the dates: the archdiocesan calendar gives 11–12 October, ACAMS gives 4–11 October. Confirm with the Catholic Centre before booking.",cat:"Marriage",source:"https://www.acams.org.sg/acams/event-page/event-details/6222/-/2026-hua-wen-hun-qian-yu-bei-ban-10yue4ri-10yue11ri",desc:"The Mandarin-language marriage preparation course, run over two Sundays.",lang:"Mandarin",tags:["Formation"]},
 {id:114,name:"OLPS 65th Feast Day — Crowning of the Icon",org:"Church of Our Lady of Perpetual Succour",orgType:"Parish",district:"East",start:"2026-10-04",end:"2026-10-04",time:"6:00pm",venue:"Church of Our Lady of Perpetual Succour",addr:"31 Siglap Hill, Singapore 456085",virtual:false,fee:"Free",reg:null,restrict:"",cat:"Mass",source:"https://olps.sg/feastday2026/",desc:"The parish's 65th feast day, including the crowning of the Icon of Our Lady of Perpetual Succour and a procession.",tags:["Prayer","Fellowship"]},
 {id:49,name:"Divorce, Separation & Annulment Symposium",org:"Catholic Family Life",orgType:"Archdiocesan",district:"Various",start:"2026-10-05",end:"2026-10-19",time:"Two sessions — 5 and 19 October",venue:"Venue advised on registration",addr:"Singapore",virtual:false,fee:"See registration",reg:"https://www.familylife.sg/EventsOverview",restrict:"",cat:"Talks & Conferences",source:"https://www.familylife.sg/EventsOverview",desc:"A two-part symposium on the pastoral and canonical questions surrounding divorce, separation and annulment.",tags:["Formation","Support Group"]},
 {id:57,name:"[ECC] Salvation History through Covenants",org:"Office for Catechesis",orgType:"Archdiocesan",district:"City",start:"2026-10-05",end:"2026-11-16",time:"5, 12, 19, 26 Oct; 2 & 16 Nov",venue:"Office for Catechesis, Catholic Centre",addr:"55 Waterloo Street, Singapore 187954",virtual:false,fee:"See registration",reg:"https://www.catechesis.org.sg/courses-events",restrict:"",cat:"Formation",source:"https://www.catechesis.org.sg/courses-events",desc:"An Enhanced Catechetical Course module tracing salvation history through the biblical covenants.",tags:["Talks & Conferences"]},
 {id:58,name:"[BCC] Prayer",org:"Office for Catechesis",orgType:"Archdiocesan",district:"City",start:"2026-10-08",end:"2026-10-22",time:"8, 15 & 22 Oct",venue:"Office for Catechesis, Catholic Centre",addr:"55 Waterloo Street, Singapore 187954",virtual:false,fee:"See registration",reg:"https://www.catechesis.org.sg/courses-events",restrict:"",cat:"Formation",source:"https://www.catechesis.org.sg/courses-events",desc:"A Basic Catechetical Course module on the Church's tradition of prayer.",tags:["Prayer","Talks & Conferences"]},
-{id:134,name:"Catholic Hackathon",org:"St Joseph's Church (Bukit Timah)",orgType:"Parish",district:"North",start:"2026-10-09",end:"2026-10-11",time:"Three days",venue:"St Joseph's Church (Bukit Timah)",addr:"620 Upper Bukit Timah Road, Singapore 678116",virtual:false,fee:"See registration",reg:null,restrict:"",cat:"Formation",source:"https://stjoseph-bt.org.sg/",desc:"A three-day hackathon building tools and ideas for the Church.",tags:["Youth","Fellowship","Volunteer & Outreach"]},
+{id:134,name:"Catholic Hackathon",org:"St Joseph's Church (Bukit Timah)",orgType:"Parish",district:"North",start:"2026-10-09",end:"2026-10-12",time:"Three days",venue:"St Joseph's Church (Bukit Timah)",addr:"620 Upper Bukit Timah Road, Singapore 678116",virtual:false,fee:"See registration",reg:null,restrict:"Sources disagree on the venue: the archdiocesan calendar lists it as a Zoom meeting, the organiser's own notice as St Joseph's Church (Bukit Timah). Confirm before setting out.",cat:"Formation",source:"https://stjoseph-bt.org.sg/",desc:"A three-day hackathon building tools and ideas for the Church.",tags:["Youth","Fellowship","Volunteer & Outreach"]},
 {id:153,name:"Creation and the Franciscan Vision — Session 2",org:"Church of St Bernadette",orgType:"Parish",district:"City",start:"2026-10-09",end:"2026-10-09",time:"8:00pm",venue:"Parish Hall, Church of St Bernadette",addr:"12 Zion Road, Singapore 247731",virtual:false,fee:"See registration",reg:null,restrict:"Presented by Fr Joe Nathan OFM",cat:"Talks & Conferences",source:"https://www.stbernadette.org.sg/csb-news-events",desc:"Second of a two-part talk on creation seen through the Franciscan tradition.",tags:["Formation","Prayer"]},
 {id:208,name:"Gracia 2026 — Jesus Youth Jubilee Conference",org:"Jesus Youth Singapore",orgType:"Lay Ministry",district:"Various",start:"2026-10-10",end:"2026-10-11",time:"Details not yet announced",venue:"Venue not yet announced",addr:"",virtual:false,fee:"See registration",reg:null,restrict:"",cat:"Youth",source:"https://singapore.jesusyouth.org/gracia-jubilee-conference/",desc:"A two-day conference marking twenty-five years of Jesus Youth in Singapore, on the theme “Faithful Witness, Joyful Missionary”. Venue and times had not been published when this was collected.",tags:["Formation","Fellowship"]},
 {id:59,name:"[ECC] Psychological First Aid",org:"Office for Catechesis",orgType:"Archdiocesan",district:"City",start:"2026-10-10",end:"2026-10-10",time:"Full day",venue:"Office for Catechesis, Catholic Centre",addr:"55 Waterloo Street, Singapore 187954",virtual:false,fee:"See registration",reg:"https://www.catechesis.org.sg/courses-events",restrict:"",cat:"Formation",source:"https://www.catechesis.org.sg/courses-events",desc:"A one-day course equipping catechists with psychological first aid skills.",tags:["Talks & Conferences"]},
@@ -744,48 +856,62 @@ const EVENTS = [
 {id:65,name:"Migrant Sunday",org:"Novena Church (Church of St Alphonsus)",orgType:"Parish",district:"City",start:"2026-10-11",end:"2026-10-11",time:"1:30pm – 4:30pm",venue:"Novena Church",addr:"300 Thomson Road, Singapore 307653",virtual:false,fee:"Free",reg:"https://novenachurch.com/events/migrant-sunday/",restrict:"",cat:"Fellowship",source:"https://novenachurch.com/events/",desc:"Novena Church's celebration of Migrant Sunday with and for migrant workers.",tags:["Volunteer & Outreach"]},
 {id:38,name:"WYD27 OYP Contingent Info Day",org:"Office for Young People",orgType:"Archdiocesan",district:"City",start:"2026-10-11",end:"2026-10-11",time:"3:00pm",venue:"Catholic Centre",addr:"55 Waterloo Street, Singapore 187954",virtual:false,fee:"Free",reg:"https://tinyurl.com/WYD27Info",restrict:"",cat:"Youth",source:"https://t.me/s/oypsg",desc:"An information session for young people considering joining the archdiocesan contingent to World Youth Day 2027 in Seoul.",tags:["Pilgrimage"]},
 {id:119,name:"Rest, Relish and Recharge Beach Retreat",org:"Cenacle Mission Singapore",orgType:"Mission Group",district:"Overseas",start:"2026-10-15",end:"2026-10-18",time:"Four days",venue:"Bintan, Indonesia",addr:"Bintan, Indonesia",virtual:false,fee:"See registration",reg:null,restrict:"Places were limited as at late August",cat:"Retreat",source:"https://ststephen.sg/",desc:"A four-day beach retreat in Bintan offering rest, reflection and prayer.",tags:["Fellowship","Prayer"]},
+{id:275,name:"A Journey of Discipleship Retreat #2",org:"Catholic Spirituality Centre",orgType:"Archdiocesan",district:"Serangoon",start:"2026-10-16",end:"2026-10-18",time:"Fri 8:30am – Sun 6:30pm (stay-in)",venue:"Catholic Spirituality Centre, St Clement Hall",addr:"1261 Upper Serangoon Road, Singapore 534796",virtual:false,fee:"$280 (incl. GST)",reg:"https://bit.ly/cscjdr2",restrict:"",cat:"Retreat",source:"https://www.catholic.sg/event/jdr2/",desc:"A stay-in retreat led by Msgr Peter Zhang and the CSC retreat team, on growing into a mature disciple and reordering life's priorities through Scripture.",tags:["Prayer"]},
+{id:276,name:"Inner Healing Retreat (Bahasa Indonesia)",org:"PDKK IHS",orgType:"Lay Ministry",district:"Overseas",start:"2026-10-16",end:"2026-10-18",time:"From 2:00pm on the Friday",venue:"Majodi Retreat Centre, Johor",addr:"Taman Perindustrian Sri Plentong, 81750 Masai, Johor, Malaysia",virtual:false,fee:"See registration",reg:"mailto:pdkkihs@kkihs.org",restrict:"",cat:"Retreat",source:"https://www.catholic.sg/event/ihr/",desc:"A retreat in Bahasa Indonesia on inner healing and the wounds people carry, held across the Causeway at the Majodi Centre in Johor.",lang:"Indonesian",tags:["Prayer"]},
 {id:215,name:"Marriage Encounter Weekend (Indonesian)",org:"Worldwide Marriage Encounter Singapore",orgType:"CFL Affiliate",district:"Various",start:"2026-10-16",end:"2026-10-18",time:"Full weekend",venue:"Venue advised on registration",addr:"Singapore",virtual:false,fee:"See registration",reg:"https://www.stmary.sg/archdiocese/me-weekend",restrict:"For married couples. Conducted in Indonesian",cat:"Marriage",source:"https://t.me/s/stmarysg",desc:"The Indonesian run of the Marriage Encounter residential weekend for married couples.",lang:"Indonesian",tags:["Retreat"]},
 {id:120,name:"Praying Our Crossroads: A Life Direction Retreat",org:"Cenacle Mission Singapore",orgType:"Mission Group",district:"East",start:"2026-10-17",end:"2026-10-18",time:"Weekend",venue:"La Salle House",addr:"490 East Coast Road, Singapore 429058",virtual:false,fee:"See registration",reg:null,restrict:"",cat:"Retreat",source:"https://ststephen.sg/",desc:"A retreat helping participants reconnect with their sense of purpose through reflection on values and aspirations.",tags:["Formation","Prayer"]},
 {id:110,name:"CST Fundraising Dinner 2026 — “100 Years of Grace, Building for Tomorrow”",org:"Church of St Teresa",orgType:"Parish",district:"City",start:"2026-10-18",end:"2026-10-18",time:"7:00pm – 10:00pm; photography from 6:30pm",venue:"Pacific Ballroom, Pan Pacific Singapore",addr:"7 Raffles Boulevard, Marina Square, Singapore 039595",virtual:false,fee:"$5,000, $10,000 or $20,000 per table of ten",reg:"mailto:cst.secretariat@catholic.org.sg",restrict:"Reservations close 10 October 2026. Parish office 6271 1184",cat:"Fundraising",source:"https://www.stteresa.sg/cst100",desc:"The parish's centenary fundraising dinner, supporting restoration of the 100-year-old church, with performances and a live band.",tags:["Fellowship"]},
 {id:48,name:"CHOICE Weekend",org:"CHOICE Singapore",orgType:"CFL Affiliate",district:"Various",start:"2026-10-23",end:"2026-10-25",time:"Full weekend",venue:"Venue advised on registration",addr:"Singapore",virtual:false,fee:"See registration",reg:"https://choice.familylife.sg/UpcomingEvents",restrict:"For single and/or dating young adults",cat:"Youth",source:"https://www.familylife.sg/EventsOverview",desc:"A weekend programme helping single and dating young adults reflect on their life direction and relationships.",tags:["Retreat"]},
-{id:50,name:"At the Feet of the Good Shepherd Retreat",org:"Catholic Family Life",orgType:"CFL Affiliate",district:"Various",start:"2026-10-24",end:"2026-10-25",time:"Weekend",venue:"Venue advised on registration",addr:"Singapore",virtual:false,fee:"See registration",reg:"https://www.familylife.sg/EventsOverview",restrict:"For the divorced and separated",cat:"Retreat",source:"https://www.familylife.sg/EventsOverview",desc:"A retreat offering pastoral and spiritual support to those who are divorced or separated.",tags:["Marriage","Support Group"]},
+{id:50,name:"At the Feet of the Good Shepherd Retreat",org:"Catholic Family Life",orgType:"CFL Affiliate",district:"Various",start:"2026-10-24",end:"2026-10-26",time:"Weekend",venue:"St Francis Xavier Retreat Centre",addr:"199 Ponggol Seventeenth Avenue, Singapore 829645",virtual:false,fee:"See registration",reg:"https://www.familylife.sg/EventsOverview",restrict:"For the divorced and separated",cat:"Retreat",source:"https://www.familylife.sg/EventsOverview",desc:"A retreat offering pastoral and spiritual support to those who are divorced or separated.",tags:["Marriage","Support Group"]},
+{id:277,name:"Catholic Social Teaching with Fr David Garcia",org:"Caritas Singapore",orgType:"Archdiocesan",district:"City",start:"2026-10-26",end:"2026-11-23",time:"Mondays, 8:00pm – 9:30pm",venue:"Fr Francisco Maia's Hall, St Joseph's Church (Victoria Street)",addr:"143 Victoria Street, Singapore 188020",virtual:false,fee:"See registration",reg:"https://bit.ly/cstsep2026",restrict:"",cat:"Formation",source:"https://www.catholic.sg/event/cst-4/2026-10-26/",desc:"A course on how the Church's social teaching turns faith into practice in daily life.",tags:["Talks & Conferences","Volunteer & Outreach"]},
 {id:217,name:"PIETA Support Group — October session",org:"PIETA Singapore",orgType:"CFL Affiliate",district:"Various",start:"2026-10-27",end:"2026-10-27",time:"7:30pm – 9:15pm",venue:"Catholic Family Life, or online — the venue alternates each month",addr:"",virtual:true,fee:"See registration",reg:"https://www.stmary.sg/archdiocese/pieta-monthly",restrict:"For bereaved parents. Check the monthly notice for whether this session is in person or on Zoom",cat:"Support Group",source:"https://t.me/s/stmarysg",desc:"The monthly gathering for parents who have lost a child.",tags:["Prayer","Fellowship"]},
 {id:225,name:"Opus Dei Retreat, Johor Bahru — young women (Hillcrest)",org:"Opus Dei Singapore",orgType:"Lay Ministry",district:"Overseas",start:"2026-10-29",end:"2026-11-01",time:"Residential, Thursday to Sunday",venue:"Johor Bahru, Malaysia",addr:"Johor Bahru, Malaysia",virtual:false,fee:"See registration",reg:null,restrict:"Young women aged 17–30. Organised through Hillcrest — hgcconnect@gmail.com or WhatsApp 9108 8654",cat:"Retreat",source:"https://opusdei.org/en-sg/article/activities-in-singapore/",desc:"A residential silent retreat across the Causeway in Johor Bahru, run by Opus Dei for young people from Singapore.",tags:["Prayer","Formation"]},
+{id:278,name:"Day for Life 2026 — A Future Full of Hope",org:"Church of the Immaculate Heart of Mary",orgType:"Parish",district:"Serangoon",start:"2026-10-31",end:"2026-10-31",time:"9:30am – 4:00pm",venue:"IHM Retreat House",addr:"46 Kovan Road, Singapore 548131",virtual:false,fee:"See registration",reg:"mailto:info@ihm.sg",restrict:"",cat:"Formation",source:"https://www.catholic.sg/event/ffh/",desc:"A day of testimonies, prayer and the sacraments on hope after abortion, the role of men in protecting life, and hope for families.",tags:["Prayer","Support Group"]},
 {id:29,name:"Life Everlasting — Saturday Rockers Bible Study",org:"Church of St Ignatius",orgType:"Parish",district:"West",start:"2026-10-31",end:"2026-10-31",time:"Saturdays, 1:30pm – 4:00pm (5 sessions)",venue:"Church of St Ignatius, or on Zoom",addr:"120 King's Road, Singapore 268172",virtual:false,fee:"See registration",reg:"https://bit.ly/Life_Everlasting",restrict:"WhatsApp Mag on 8905 6765 or Michelle on 9736 8775. The parish page does not say which sessions are in person and which are on Zoom",cat:"Formation",source:"https://www.stignatius.org.sg/",desc:"A five-session study on the Church's teaching about eternal life, run by the parish's Saturday Rockers group."},
 {id:8,name:"Praise and Worship Workshop",org:"Church of Divine Mercy",orgType:"Parish",district:"East",start:"2026-10-31",end:"2026-11-01",time:"Sat–Sun",venue:"Church of Divine Mercy",addr:"19 Pasir Ris Street 72, Singapore 518771",virtual:false,fee:"See registration",reg:"https://tinyurl.com/cdmworship26",restrict:"",cat:"Formation",source:"https://new.divinemercy.sg/",desc:"A two-day workshop on leading sung worship, closing with a night of worship open to the whole parish.",tags:["Prayer","Music & Performance"]},
 {id:89,name:"Cahaya Masa Depan — Batam Dental & Skills Mission",org:"Cahaya Masa Depan",orgType:"Mission Group",district:"Overseas",start:"2026-11-01",end:"2026-11-30",time:"November 2026 — exact dates to be confirmed",venue:"Batam, Indonesia",addr:"Batam, Indonesia",virtual:false,fee:"See registration",reg:"mailto:assomasadepan@gmail.com",restrict:"Dental and training volunteers especially welcome",cat:"Overseas Mission",source:"https://charis-singapore.org/calendar/",desc:"Mission providing dental services and vocational skills training in Batam.",tags:["Volunteer & Outreach"],datePrecision:"month"},
 {id:90,name:"Clare's Missionary — Sabah Migrant Children Outreach",org:"Clare's Missionary",orgType:"Mission Group",district:"Overseas",start:"2026-11-01",end:"2026-11-30",time:"November 2026 — exact dates to be confirmed",venue:"Sabah, Malaysia",addr:"Sabah, Malaysia",virtual:false,fee:"See registration",reg:"mailto:claresenrichment@gmail.com",restrict:"Contact the organiser",cat:"Overseas Mission",source:"https://charis-singapore.org/calendar/",desc:"Outreach to migrant children in Sabah, including English teaching.",tags:["Volunteer & Outreach","Youth"],datePrecision:"month"},
 {id:81,name:"Gebirah Mission — Hong Kong",org:"Gebirah",orgType:"Mission Group",district:"Overseas",start:"2026-11-06",end:"2026-11-10",time:"6–10 Nov 2026",venue:"Hong Kong",addr:"Hong Kong",virtual:false,fee:"See registration",reg:"https://www.gebirah.org/mission-trips/hong-kong",restrict:"Volunteers; you may also support by donating items, sponsoring a volunteer or praying",cat:"Overseas Mission",source:"https://www.stmary.sg/archdiocese/gebirah",desc:"A five-day Catholic mission to Hong Kong serving refugees, the poor and marginalised communities.",tags:["Volunteer & Outreach"]},
+{id:279,name:"Introduction to Accompaniment",org:"Catholic Leadership Centre (CLC)",orgType:"Archdiocesan",district:"North",start:"2026-11-07",end:"2026-11-07",time:"9:00am – 5:00pm",venue:"Lifesprings Canossian Spirituality Centre",addr:"100 Jalan Merbok, Singapore 598454",virtual:false,fee:"See registration",reg:"mailto:enquiry.clc@catholic.org.sg",restrict:"",cat:"Formation",source:"https://www.catholic.sg/event/ia/",desc:"An introductory module developed by the Catholic Leadership Centre with the Archdiocesan Pastoral Council, on accompaniment as a way of walking with others in faith."},
+{id:280,name:"Bible Symposium 2026 — Scripture for the Concrete Jungle",org:"Verbum Dei Missionaries",orgType:"Mission Group",district:"City",start:"2026-11-09",end:"2026-11-09",time:"8:30am – 1:00pm",venue:"Novena Church (Church of St Alphonsus)",addr:"300 Thomson Road, Singapore 307653",virtual:false,fee:"$30 per person, $50 for two",reg:"https://tinyurl.com/VdeiBibleSymposium",restrict:"Registration closes 18 October 2026",cat:"Formation",source:"https://www.catholic.sg/event/scj/",desc:"A morning symposium on making Scripture part of an ordinary working life, with keynote speakers and a panel. Light refreshments provided.",tags:["Talks & Conferences","Prayer"]},
 {id:108,name:"ACTS Mission Send Off",org:"ACTS Singapore",orgType:"Mission Group",district:"Various",start:"2026-11-15",end:"2026-11-15",time:"2:00pm – 5:00pm",venue:"Venue to be confirmed",addr:"Singapore",virtual:false,fee:"Free",reg:null,restrict:"For missioners, their families and supporters",cat:"Prayer",source:"https://acts-singapore.com/",desc:"Commissioning and send-off gathering for all ACTS end-of-year mission teams.",tags:["Fellowship"]},
 {id:170,name:"Inner Healing Retreat #8",org:"Catholic Spirituality Centre",orgType:"Archdiocesan",district:"Serangoon",start:"2026-11-19",end:"2026-11-22",time:"Four days, stay-in",venue:"Catholic Spirituality Centre",addr:"1261 Upper Serangoon Road, Singapore 534796",virtual:false,fee:"See registration",reg:null,restrict:"Semi-silent, stay-in retreat",cat:"Retreat",source:"https://csctr.net/events/inner-healing-retreat/",desc:"A semi-silent stay-in retreat on healing of childhood, relational and emotional wounds.",tags:["Prayer","Support Group"]},
 {id:221,name:"Opus Dei Retreat, Johor Bahru — young men",org:"Opus Dei Singapore",orgType:"Lay Ministry",district:"Overseas",start:"2026-11-19",end:"2026-11-22",time:"Residential, Thursday to Sunday",venue:"Johor Bahru, Malaysia",addr:"Johor Bahru, Malaysia",virtual:false,fee:"See registration",reg:"https://docs.google.com/forms/d/1ZsM1Kbtqzm9FqRdM3JKgjI0f8p6o76RA5OJnzOKiCO0/preview",restrict:"Young men aged 17–25",cat:"Retreat",source:"https://opusdei.org/en-sg/article/activities-in-singapore/",desc:"A residential silent retreat across the Causeway in Johor Bahru, run by Opus Dei for young people from Singapore.",tags:["Prayer","Formation"]},
 {id:161,name:"Care for Creation Retreat & Field Trip, Chiang Mai",org:"Church of St Ignatius",orgType:"Parish",district:"Overseas",start:"2026-11-23",end:"2026-11-29",time:"Seven days",venue:"Chiang Mai, Thailand",addr:"Chiang Mai, Thailand",virtual:false,fee:"See registration",reg:null,restrict:"Led by Fr Colin Tan SJ",cat:"Retreat",source:"https://t.me/s/stiggys",desc:"A silent retreat with a Laudato Si' field trip in northern Thailand.",tags:["Pilgrimage","Formation"]},
 {id:60,name:"KidZ Bible Camp",org:"Office for Catechesis",orgType:"Archdiocesan",district:"City",start:"2026-11-24",end:"2026-11-26",time:"3 days",venue:"Office for Catechesis, Catholic Centre",addr:"55 Waterloo Street, Singapore 187954",virtual:false,fee:"See registration",reg:"https://www.catechesis.org.sg/courses-events",restrict:"For children",cat:"Youth",source:"https://www.catechesis.org.sg/courses-events",desc:"A three-day Bible camp for children run by the Office for Catechesis.",tags:["Formation"]},
 {id:218,name:"PIETA Support Group — November session",org:"PIETA Singapore",orgType:"CFL Affiliate",district:"Various",start:"2026-11-24",end:"2026-11-24",time:"7:30pm – 9:15pm",venue:"Catholic Family Life, or online — the venue alternates each month",addr:"",virtual:true,fee:"See registration",reg:"https://www.stmary.sg/archdiocese/pieta-monthly",restrict:"For bereaved parents. Check the monthly notice for whether this session is in person or on Zoom",cat:"Support Group",source:"https://t.me/s/stmarysg",desc:"The monthly gathering for parents who have lost a child.",tags:["Prayer","Fellowship"]},
+{id:288,name:"Gazing Back, Imagining Forward — semi-silent retreat, Thailand",org:"Our Ignatian Journey",orgType:"Lay Ministry",district:"Overseas",start:"2026-11-26",end:"2026-11-29",time:"Four days, three nights",venue:"Baan Phu Waan Pastoral Centre, Sampran",addr:"24 Moo 6, Petkasem Road, Thakham, Sampran, Nakhon Pathom 73110, Thailand",virtual:false,fee:"S$795 twin / S$860 single, excluding airfare (higher rates support the ministry)",reg:"https://docs.google.com/forms/d/e/1FAIpQLScSX-F4PLFjzuLTMzyVeTKW9oo-G5la1X_siaLHmDn1wxBLyA/viewform",restrict:"Travel insurance covering COVID-19 is required. Write to ignatianjourney@gmail.com if the cost is prohibitive — help is offered.",cat:"Retreat",source:"https://docs.google.com/forms/d/e/1FAIpQLScSX-F4PLFjzuLTMzyVeTKW9oo-G5la1X_siaLHmDn1wxBLyA/viewform",desc:"A four-day semi-silent retreat at the Bangkok archdiocese's pastoral centre outside Sampran, with input sessions and spiritual direction, looking back over the year with the Lord. The fee covers full board, an ensuite room and airport transfers, but not flights.",tags:["Prayer"]},
 {id:226,name:"Opus Dei Retreat, Johor Bahru — young women (Hillcrest)",org:"Opus Dei Singapore",orgType:"Lay Ministry",district:"Overseas",start:"2026-11-26",end:"2026-11-29",time:"Residential, Thursday to Sunday",venue:"Johor Bahru, Malaysia",addr:"Johor Bahru, Malaysia",virtual:false,fee:"See registration",reg:null,restrict:"Young women aged 17–30. Organised through Hillcrest — hgcconnect@gmail.com or WhatsApp 9108 8654",cat:"Retreat",source:"https://opusdei.org/en-sg/article/activities-in-singapore/",desc:"A residential silent retreat across the Causeway in Johor Bahru, run by Opus Dei for young people from Singapore.",tags:["Prayer","Formation"]},
 {id:100,name:"ACTS Mission — Kompong Thom, Cambodia",org:"ACTS Singapore",orgType:"Mission Group",district:"Overseas",start:"2026-11-28",end:"2026-12-05",time:"28 Nov – 5 Dec 2026",venue:"Kompong Thom, Cambodia",addr:"Kompong Thom, Cambodia",virtual:false,fee:"See registration",reg:"https://acts-singapore.com/mission-trips",restrict:"Registration for 2026 ran 26 Jun – 26 Jul. Open to ages 12–75; popular with families",cat:"Overseas Mission",source:"https://acts-singapore.com/",desc:"End-of-year mission to Kompong Thom, working on education, healthcare, nutrition and home repair.",tags:["Volunteer & Outreach"]},
 {id:99,name:"ACTS Mission — Manila, Philippines",org:"ACTS Singapore",orgType:"Mission Group",district:"Overseas",start:"2026-11-28",end:"2026-12-04",time:"28 Nov – 4 Dec 2026",venue:"Manila, Philippines",addr:"Manila, Philippines",virtual:false,fee:"See registration",reg:"https://acts-singapore.com/mission-trips",restrict:"REGISTRATION CLOSED for 2026",cat:"Overseas Mission",source:"https://acts-singapore.com/",desc:"ACTS Singapore's end-of-year mission to Manila, working with local village and school communities.",tags:["Volunteer & Outreach"]},
 {id:101,name:"ACTS Mission — Phnom Penh (Teuk Thla), Cambodia",org:"ACTS Singapore",orgType:"Mission Group",district:"Overseas",start:"2026-11-28",end:"2026-12-05",time:"28 Nov – 5 Dec 2026",venue:"Teuk Thla, Phnom Penh, Cambodia",addr:"Phnom Penh, Cambodia",virtual:false,fee:"See registration",reg:"https://acts-singapore.com/mission-trips",restrict:"Registration for 2026 ran 26 Jun – 26 Jul",cat:"Overseas Mission",source:"https://acts-singapore.com/",desc:"End-of-year mission to the Teuk Thla community in Phnom Penh, with Don Bosco schools and local families.",tags:["Volunteer & Outreach"]},
 {id:102,name:"ACTS Mission — Phnom Penh (Tuol Kork), Cambodia",org:"ACTS Singapore",orgType:"Mission Group",district:"Overseas",start:"2026-11-28",end:"2026-12-05",time:"28 Nov – 5 Dec 2026",venue:"Tuol Kork, Phnom Penh, Cambodia",addr:"Phnom Penh, Cambodia",virtual:false,fee:"See registration",reg:"https://acts-singapore.com/mission-trips",restrict:"Registration for 2026 ran 26 Jun – 26 Jul",cat:"Overseas Mission",source:"https://acts-singapore.com/",desc:"End-of-year mission to the Tuol Kork community in Phnom Penh.",tags:["Volunteer & Outreach"]},
+{id:281,name:"Sequela Christi 2026 — Franciscan pilgrimage to Japan",org:"Franciscan Young Adults (Fraternitas)",orgType:"Lay Ministry",district:"Overseas",start:"2026-11-30",end:"2026-12-11",time:"12 days",venue:"Japan",addr:"Japan",virtual:false,fee:"See registration",reg:"mailto:admin@fraternitas.sg",restrict:"Young adults aged 18–35",cat:"Pilgrimage",source:"https://www.catholic.sg/event/sc26/",desc:"A twelve-day Jubilee pilgrimage in the footsteps of the Franciscan martyrs and the Hidden Christians of Japan.",tags:["Youth"]},
 {id:91,name:"Reverse Carolling Project — Philippines",org:"ICPE Mission Singapore",orgType:"Mission Group",district:"Overseas",start:"2026-12-01",end:"2026-12-31",time:"December 2026 — exact dates to be confirmed",venue:"Philippines",addr:"Philippines",virtual:false,fee:"See registration",reg:"mailto:icpe.sg@gmail.com",restrict:"Contact the organiser",cat:"Overseas Mission",source:"https://charis-singapore.org/calendar/",desc:"A Christmas mission bringing gifts and food to families with little or no income.",tags:["Volunteer & Outreach"],datePrecision:"month"},
 {id:182,name:"World AIDS Day Commemoration",org:"Catholic AIDS Response Effort (CARE)",orgType:"Lay Ministry",district:"Various",start:"2026-12-01",end:"2026-12-01",time:"Details not yet announced",venue:"Venue not published",addr:"Singapore",virtual:false,fee:"See registration",reg:null,restrict:"An annual observance; programme not yet published",cat:"Volunteer & Outreach",source:"https://catholicaidsresponseeffort.com/",desc:"CARE marks World AIDS Day in support of people living with HIV.",tags:["Prayer","Support Group"]},
 {id:44,name:"Marriage Encounter Weekend (December)",org:"Worldwide Marriage Encounter Singapore",orgType:"CFL Affiliate",district:"Various",start:"2026-12-04",end:"2026-12-06",time:"Full weekend",venue:"Venue advised on registration",addr:"Singapore",virtual:false,fee:"See registration",reg:"https://www.wwmesg.org/Weekend_Reg",restrict:"For married couples",cat:"Marriage",source:"https://new.divinemercy.sg/",desc:"A residential weekend for married couples to deepen their communication and relationship.",tags:["Retreat"]},
+{id:283,name:"Marriage Encounter Weekend (December) — Go on a Date!",org:"Worldwide Marriage Encounter Singapore",orgType:"CFL Affiliate",district:"Serangoon",start:"2026-12-04",end:"2026-12-06",time:"From 8:00pm on the Friday",venue:"ME House",addr:"201-B Punggol Seventeenth Avenue, Singapore 829651",virtual:false,fee:"See registration",reg:"mailto:wwmesg@gmail.com",restrict:"Married couples, especially those married three years or more; priests and religious welcome",cat:"Marriage",source:"https://www.catholic.sg/event/me-weekend/",desc:"An enrichment weekend for married couples — as much for good marriages as for tired ones — including time to look at the marriage as a sacrament."},
 {id:222,name:"Opus Dei Retreat, Johor Bahru — young women",org:"Opus Dei Singapore",orgType:"Lay Ministry",district:"Overseas",start:"2026-12-04",end:"2026-12-07",time:"Residential, Friday to Monday",venue:"Johor Bahru, Malaysia",addr:"Johor Bahru, Malaysia",virtual:false,fee:"See registration",reg:"https://forms.gle/974qSHvCzQkiAd9m9",restrict:"Young women aged 17–30",cat:"Retreat",source:"https://opusdei.org/en-sg/article/activities-in-singapore/",desc:"A residential silent retreat across the Causeway in Johor Bahru, run by Opus Dei for young people from Singapore.",tags:["Prayer","Formation"]},
 {id:103,name:"ACTS Mission — Battambang, Cambodia",org:"ACTS Singapore",orgType:"Mission Group",district:"Overseas",start:"2026-12-05",end:"2026-12-12",time:"5 – 12 Dec 2026",venue:"Battambang, Cambodia",addr:"Battambang, Cambodia",virtual:false,fee:"See registration",reg:"https://acts-singapore.com/mission-trips",restrict:"REGISTRATION CLOSED for 2026",cat:"Overseas Mission",source:"https://acts-singapore.com/",desc:"End-of-year mission to Battambang in north-west Cambodia.",tags:["Volunteer & Outreach"]},
 {id:104,name:"ACTS Mission — Ta'Om / Jesus Farms, Cambodia",org:"ACTS Singapore",orgType:"Mission Group",district:"Overseas",start:"2026-12-05",end:"2026-12-12",time:"5 – 12 Dec 2026",venue:"Ta'Om / Jesus Farms, Cambodia",addr:"Ta'Om, Cambodia",virtual:false,fee:"See registration",reg:"https://acts-singapore.com/mission-trips",restrict:"WAITLIST ONLY for 2026",cat:"Overseas Mission",source:"https://acts-singapore.com/",desc:"End-of-year mission to Ta'Om and the Jesus Farms community.",tags:["Volunteer & Outreach"]},
+{id:282,name:"Quieting the Soul — silent retreat, Chiang Mai",org:"Cenacle Mission Singapore",orgType:"Mission Group",district:"Overseas",start:"2026-12-05",end:"2026-12-09",time:"Check in 4 Dec, check out 10 Dec",venue:"Seven Fountains, Chiang Mai",addr:"Seven Fountains, Chiang Mai, Thailand",virtual:false,fee:"$910",reg:"https://www.cenaclemission.com/retreats-programmes",restrict:"Orientation on 25 October, 2–5pm, compulsory for first-time retreatants",cat:"Retreat",source:"https://www.catholic.sg/event/qscm/",desc:"A five-day silent, individually directed retreat suited to beginners and to those already used to silent prayer.",tags:["Prayer"]},
 {id:206,name:"Four Dioceses Youth Rally 2026",org:"ACAMS — Commission for the Apostolate of Mandarin-speaking",orgType:"Archdiocesan",district:"Serangoon",start:"2026-12-10",end:"2026-12-10",time:"10:00am – 5:00pm",venue:"Catholic Spirituality Centre",addr:"1261 Upper Serangoon Road, Singapore 534796",virtual:false,fee:"$175",reg:"https://acams.org.sg/acams/2026-si-jiao-qu-youth-rally",restrict:"Ages 14 and above",cat:"Youth",source:"https://www.acams.org.sg/acams/event-page/event-details/6240/-/si-jiao-qu-qing-nian-da-ji-hui2026",desc:"Mandarin-speaking young Catholics from Singapore meet peers from the dioceses of Kuala Lumpur, Penang and Malacca-Johore, on the theme “Peace I have given you”.",lang:"Mandarin",tags:["Fellowship","Formation"]},
 {id:227,name:"Opus Dei Retreat, Johor Bahru — young women (Hillcrest)",org:"Opus Dei Singapore",orgType:"Lay Ministry",district:"Overseas",start:"2026-12-10",end:"2026-12-13",time:"Residential, Thursday to Sunday",venue:"Johor Bahru, Malaysia",addr:"Johor Bahru, Malaysia",virtual:false,fee:"See registration",reg:null,restrict:"Young women aged 17–30. Organised through Hillcrest — hgcconnect@gmail.com or WhatsApp 9108 8654",cat:"Retreat",source:"https://opusdei.org/en-sg/article/activities-in-singapore/",desc:"A residential silent retreat across the Causeway in Johor Bahru, run by Opus Dei for young people from Singapore.",tags:["Prayer","Formation"]},
 {id:116,name:"Responder Plus Programme",org:"Church of St Stephen",orgType:"Parish",district:"East",start:"2026-12-12",end:"2026-12-12",time:"9:00am – 12:30pm",venue:"Church of St Stephen",addr:"30 Sallim Road, Singapore 387639",virtual:false,fee:"See registration",reg:"mailto:css.secretariat@catholic.org.sg",restrict:"Registration closes 1 October 2026",cat:"Formation",source:"https://ststephen.sg/",desc:"An SCDF course in first aid, CPR-AED and basic firefighting, taught through classroom learning and hands-on practice.",tags:["Volunteer & Outreach"]},
+{id:284,name:"Year End Mass (Bahasa Indonesia)",org:"Indonesian Catholic Community",orgType:"Lay Ministry",district:"North",start:"2026-12-31",end:"2026-12-31",time:"8:00pm",venue:"Holy Spirit Chapel, Church of the Holy Spirit",addr:"248 Upper Thomson Road, Singapore 574371",virtual:false,fee:"Free",reg:"mailto:angelika.sundari@hotmail.com",restrict:"All welcome. The archdiocesan notice still carries last year's wording — confirm before going",cat:"Mass",source:"https://www.catholic.sg/event/year-end-mass-bahasa-indonesia/2026-12-31/",desc:"The Indonesian community's year-end Mass, followed by fellowship.",lang:"Indonesian",tags:["Fellowship"]},
 {id:39,name:"Kerygma 2027",org:"Office for Young People",orgType:"Archdiocesan",district:"City",start:"2027-01-05",end:"2027-03-01",time:"Weekly series",venue:"Catholic Centre",addr:"55 Waterloo Street, Singapore 187954",virtual:false,fee:"See registration",reg:"mailto:joel.oyp@catholic.org.sg",restrict:"Ages 18–25",cat:"Youth",source:"https://t.me/s/oypsg",desc:"An eight-week formation programme for young adults on the core Christian proclamation.",tags:["Formation"]},
-{id:197,name:"RCIY 2027 intake — Church of St Mary of the Angels",org:"Church of St Mary of the Angels",orgType:"Parish",district:"West",start:"2027-01-26",end:"2027-01-26",time:"Journey begins 26 January 2027",venue:"Church of St Mary of the Angels",addr:"5 Bukit Batok East Avenue 2, Singapore 659918",virtual:false,fee:"See registration",reg:null,restrict:"For young people. Enquire through the parish — see the Office for Catechesis listing",cat:"Youth",source:"https://www.catechesis.org.sg/Programmes/RCIA/Seek",desc:"The youth form of the Christian initiation journey, run over a year and a half, with the next intake opening on 26 January 2027.",tags:["Formation"]},
-{id:196,name:"RCIA / OCIA 2027 intake — Church of St Anthony",org:"Church of St Anthony",orgType:"Parish",district:"North",start:"2027-02-01",end:"2027-02-01",time:"Journey begins 1 February 2027",venue:"Church of St Anthony",addr:"25 Woodlands Avenue 1, Singapore 739064",virtual:false,fee:"See registration",reg:null,restrict:"For adults enquiring about the Catholic faith, and for baptised Christians wishing to join the Church. Write to csa.pastoral@catholic.org.sg or rcia@saint-anthony.org",cat:"Formation",source:"https://www.catechesis.org.sg/Programmes/RCIA/Seek",desc:"This parish runs its Christian initiation journey over two years, with the next intake opening on 1 February 2027. Now formally the Order of Christian Initiation of Adults (OCIA), though the Office for Catechesis and most parishes here still call it RCIA."},
+{id:286,name:"Retreats by the Sea — Journey to Listening (preached retreat)",org:"Our Ignatian Journey",orgType:"Lay Ministry",district:"Overseas",start:"2027-01-06",end:"2027-01-10",time:"Five days, four nights",venue:"Sacred Heart of Jesus Retreat House, Cha-am (near Hua Hin)",addr:"1341/3 Petchakasem Road, Cha-am, Amphoe Cha-am, Petchaburi 76120, Thailand",virtual:false,fee:"S$520–850 depending on room and rate chosen, excluding airfare",reg:"https://docs.google.com/forms/d/e/1FAIpQLScSX-F4PLFjzuLTMzyVeTKW9oo-G5la1X_siaLHmDn1wxBLyA/viewform",restrict:"Travel insurance covering COVID-19 is required. Can be booked together with the silent retreat that follows, at a combined rate.",cat:"Retreat",source:"https://docs.google.com/forms/d/e/1FAIpQLScSX-F4PLFjzuLTMzyVeTKW9oo-G5la1X_siaLHmDn1wxBLyA/viewform",desc:"A preached retreat by the sea at Cha-am, near Hua Hin, with five days of input sessions. The fee covers full board, an ensuite room and airport transfers, but not flights. Subsidised, at-cost and supporting rates are offered.",tags:["Prayer"]},
+{id:287,name:"Retreats by the Sea — Journey into Solitude (silent retreat)",org:"Our Ignatian Journey",orgType:"Lay Ministry",district:"Overseas",start:"2027-01-11",end:"2027-01-17",time:"Seven days, six nights",venue:"Sacred Heart of Jesus Retreat House, Cha-am (near Hua Hin)",addr:"1341/3 Petchakasem Road, Cha-am, Amphoe Cha-am, Petchaburi 76120, Thailand",virtual:false,fee:"S$845–1,100 depending on rate chosen, excluding airfare and the spiritual director's stipend",reg:"https://docs.google.com/forms/d/e/1FAIpQLScSX-F4PLFjzuLTMzyVeTKW9oo-G5la1X_siaLHmDn1wxBLyA/viewform",restrict:"Single rooms only. Travel insurance covering COVID-19 is required. The organisers suggest a stipend of about S$50 per session for your spiritual director, which is not in the fee. Can be booked together with the preached retreat before it, at a combined rate.",cat:"Retreat",source:"https://docs.google.com/forms/d/e/1FAIpQLScSX-F4PLFjzuLTMzyVeTKW9oo-G5la1X_siaLHmDn1wxBLyA/viewform",desc:"A seven-day silent, individually directed retreat by the sea at Cha-am, near Hua Hin, following straight on from the preached retreat. The fee covers full board, a single ensuite room and airport transfers, but not flights.",tags:["Prayer"]},
+{id:197,name:"RCIY 2027 intake — Church of St Mary of the Angels",org:"Church of St Mary of the Angels",orgType:"Parish",district:"West",start:"2027-01-26",end:"2028-04-16",time:"Journey begins 26 January 2027",venue:"Church of St Mary of the Angels",addr:"5 Bukit Batok East Avenue 2, Singapore 659918",virtual:false,fee:"See registration",reg:null,restrict:"For young people. Enquire through the parish — see the Office for Catechesis listing",cat:"Youth",source:"https://www.catechesis.org.sg/Programmes/RCIA/Seek",desc:"The parish's journey of Christian initiation, with an intake opening on the date shown. Journeys of this kind normally close at the following Easter; the end date here is that Easter Sunday and was worked out, not published. Write to the parish team to join.",tags:["Formation"],initiation:true},
+{id:196,name:"RCIA / OCIA 2027 intake — Church of St Anthony",org:"Church of St Anthony",orgType:"Parish",district:"North",start:"2027-02-01",end:"2028-04-16",time:"Journey begins 1 February 2027",venue:"Church of St Anthony",addr:"25 Woodlands Avenue 1, Singapore 739064",virtual:false,fee:"See registration",reg:null,restrict:"For adults enquiring about the Catholic faith, and for baptised Christians wishing to join the Church. Write to csa.pastoral@catholic.org.sg or rcia@saint-anthony.org",cat:"Formation",source:"https://www.catechesis.org.sg/Programmes/RCIA/Seek",desc:"The parish's journey of Christian initiation, with an intake opening on the date shown. Journeys of this kind normally close at the following Easter; the end date here is that Easter Sunday and was worked out, not published. Write to the parish team to join.",initiation:true},
 {id:16,name:"World Youth Day 2027 — CDM Contingent",org:"Church of Divine Mercy",orgType:"Parish",district:"East",start:"2027-07-27",end:"2027-08-10",time:"Full pilgrimage",venue:"Seoul, South Korea",addr:"Seoul, South Korea",virtual:false,fee:"See registration",reg:"https://tinyurl.com/cdmwyd2027",restrict:"Contingent limited to 40 pilgrims",cat:"Pilgrimage",source:"https://new.divinemercy.sg/",desc:"Church of Divine Mercy is forming a pilgrim contingent for World Youth Day 2027 in Seoul.",tags:["Youth"]},
 ];
 
 const SOURCE_TIERS = [
 {tier:"Archdiocesan hubs",note:"Central channels that carry events from many organisers at once.",orgs:[
  {name:"Roman Catholic Archdiocese of Singapore",links:[
-  {u:"https://www.catholic.sg/events/",l:"Upcoming Events calendar",d:"The archdiocese's own events calendar, tagged by venue and organiser."},
+  {u:"https://www.catholic.sg/events/",l:"Upcoming Events calendar",d:"The archdiocese's own events calendar, tagged by venue and organiser — the fullest single listing there is. Events from it reached this calendar for the first time on 30 August 2026."},
+  {u:"https://www.catholic.sg/events/?ical=1",l:"Subscribe to it yourself",d:"The same calendar as a file your phone or computer can subscribe to, so it updates by itself. Worth adding if you would rather follow the archdiocese directly."},
   {u:"https://www.catholic.sg/events/category/type/",l:"Events by type",d:"The same calendar filtered into retreats, talks and other categories."},
   {u:"https://www.catholic.sg/category/announcements-news/",l:"Announcements & News",d:"Chancery notices and archdiocesan announcements."},
   {u:"https://t.me/s/CatholicSG",l:"Telegram channel",d:"The archdiocese's Telegram feed — often the fastest place announcements appear."}]}]},
@@ -970,6 +1096,8 @@ const SOURCE_TIERS = [
  {name:"De La Salle Brothers",links:[{u:"https://www.facebook.com/dlsbrothers.sg/",l:"Facebook only",d:"No website found. Manual check only."}]}]},
 
 {tier:"Lay movements, ministries & gathering places",note:"Lay apostolates, and the places Catholic life gathers outside a parish. Much of this activity is weekly cell meetings rather than public events, so listings here are sparse by nature.",orgs:[
+ {name:"Our Ignatian Journey",links:[
+  {u:"https://forms.gle/LfPDZ3Ds5Qvto4tG9",l:"Join their mailing list",d:"A small group running Ignatian retreats, most of them in Thailand. They keep no website — each run is announced by flyer, with its own registration form that closes with the retreat, so their events here are added by hand as those flyers reach us. Their mailing list is the way to hear about the next one; write to ignatianjourney@gmail.com to ask about a retreat directly."}]},
  {name:"Alpha Singapore",links:[
   {u:"https://singapore.alpha.org/",l:"Website",d:"Alpha is a run of relaxed sessions — a talk, a meal, and an honest conversation about faith with no question off limits. It is free, runs nine to twelve weeks, and you can try a week before deciding."},
   {u:"https://singapore.alpha.org/try/",l:"Find an Alpha near you",d:"A search that shows which parishes and churches are starting a course. It runs in your browser, so its dates cannot be pulled into this calendar — look here directly."}]},
@@ -1140,7 +1268,7 @@ function matchesQuery(e, p){
   return p.inc.every(t => h.includes(t)) && !p.exc.some(t => h.includes(t));
 }
 
-let state = {q:"", sort:"start", dir:1, upcoming:true, ongoing:false, free:false, online:false, lang:"en", freq:"excl", desc:true, cats:[], locs:[], orgs:[], from:"", to:"", range:"", view:"table"};
+let state = {q:"", sort:"start", dir:1, upcoming:true, ongoing:false, free:false, online:false, lang:"en", freq:"excl", started:false, desc:true, cats:[], locs:[], orgs:[], from:"", to:"", range:"", view:"table", calMode:"month"};
 
 const COLS = [
   {key:"name",  label:"Event"},
@@ -1169,10 +1297,21 @@ const MULTIS = {
 function passesFilters(e){
   /* Neither pressed = no date restriction at all, which is what the search widener wants. */
   if(state.upcoming || state.ongoing){
-    if(!((state.upcoming && isAhead(e)) || (state.ongoing && isUnderway(e)))) return false;
+    /* Asking for daily/weekly activities or for begun initiation journeys is a request for those
+       things in particular. Both started before today, so the date chips would throw them out
+       again — they are therefore exempt from the date restriction while they are still running,
+       rather than being smuggled in by switching "already under way" on, which used to drag in
+       every other under-way event alongside them. */
+    const asked = isUnderway(e) &&
+      ((state.freq === "all" && e.recurring) || (state.started && e.initiation));
+    if(!asked && !((state.upcoming && isAhead(e)) || (state.ongoing && isUnderway(e)))) return false;
   }
   if(state.freq==="excl" && e.recurring) return false;
-  if(state.freq==="only" && !e.recurring) return false;
+  /* An initiation journey runs from its intake to the following Easter, so most of the year
+     the ones on offer have already begun and cannot be joined. They are held back by default
+     rather than deleted, because someone looking ahead to next year's intake still wants to
+     know which parish runs one and who to write to. */
+  if(!state.started && e.initiation && !isAhead(e)) return false;
   if(state.lang==="en"   && e.lang) return false;
   if(state.lang==="vern" && !e.lang) return false;
   if(state.free && !isFree(e)) return false;
@@ -1235,11 +1374,29 @@ function renderCalendar(rows){
     calCursor = hasThisMonth || !first ? new Date(TODAY.getFullYear(),TODAY.getMonth(),1)
                                        : new Date(first.slice(0,4), +first.slice(5,7)-1, 1);
   }
+  const week = state.calMode === "week";
+
+  /* Month and week differ only in which days the grid covers and how it is labelled, so both
+     are described here as one window and everything below works off that. A month pads to whole
+     weeks with blank cells; a week is simply the seven days from its Monday. */
+  const mondayOf = d => { const x = new Date(d); x.setDate(x.getDate() - ((x.getDay()+6)%7)); x.setHours(0,0,0,0); return x; };
   const y = calCursor.getFullYear(), mo = calCursor.getMonth();
-  const monthLabel = calCursor.toLocaleDateString("en-SG",{month:"long",year:"numeric"});
-  const firstDow = (new Date(y,mo,1).getDay()+6)%7;          // Monday-first
   const nDays = new Date(y,mo+1,0).getDate();
-  const cells = Math.ceil((firstDow+nDays)/7)*7;
+  const firstDow = (new Date(y,mo,1).getDay()+6)%7;
+  const gridStart = week ? mondayOf(calCursor) : new Date(y, mo, 1 - firstDow);
+  const cellCount = week ? 7 : Math.ceil((firstDow+nDays)/7)*7;
+  const dayAt = i => { const d = new Date(gridStart); d.setDate(d.getDate()+i); return d; };
+  const winStart = ymd(gridStart), winEnd = ymd(dayAt(cellCount-1));
+  const inWindow = d => !week || (d >= winStart && d <= winEnd);
+  const perCell = week ? 8 : 3;              // a week has the room to show more before folding
+
+  const label = week
+    ? (()=>{ const a=gridStart, b=dayAt(6);
+        const sameMonth = a.getMonth()===b.getMonth();
+        const f = (d,withMonth)=> d.getDate() + (withMonth ? " "+d.toLocaleDateString("en-SG",{month:"short"}) : "");
+        return `${f(a,!sameMonth)} – ${f(b,true)} ${b.getFullYear()}`; })()
+    : calCursor.toLocaleDateString("en-SG",{month:"long",year:"numeric"});
+  const periodWord = week ? "this week" : "this month";
 
   const runDays = e => Math.round((new Date((e.end||e.start)+"T00:00:00") - new Date(e.start+"T00:00:00"))/MS)+1;
   const isLongRun = e => runDays(e) > 7;
@@ -1247,25 +1404,24 @@ function renderCalendar(rows){
       ? e.start === d                                   // long runs appear on their start day only
       : (e.start <= d && (e.end||e.start) >= d))
     .sort((a,b)=> (a.start===d?0:1)-(b.start===d?0:1));
-  const inMonth = dated.filter(e=>{
-    const a=e.start, b=e.end||e.start, s0=ymd(new Date(y,mo,1)), s1=ymd(new Date(y,mo,nDays));
-    return a<=s1 && b>=s0;
-  });
-  const mStart = ymd(new Date(y,mo,1)), mEnd = ymd(new Date(y,mo,nDays));
-  const running = dated.filter(e => runDays(e) > 7 && e.start <= mEnd && (e.end||e.start) >= mStart);
-  const tbc = rows.filter(e=>e.datePrecision==="month" && e.start.slice(0,7)===`${y}-${String(mo+1).padStart(2,"0")}`);
+
+  /* What the window holds, for the count and for the two strips underneath it. */
+  const spanStart = week ? winStart : ymd(new Date(y,mo,1));
+  const spanEnd   = week ? winEnd   : ymd(new Date(y,mo,nDays));
+  const inSpan = dated.filter(e => e.start <= spanEnd && (e.end||e.start) >= spanStart);
+  const running = dated.filter(e => isLongRun(e) && e.start <= spanEnd && (e.end||e.start) >= spanStart);
+  const tbc = week ? [] : rows.filter(e=>e.datePrecision==="month" && e.start.slice(0,7)===`${y}-${String(mo+1).padStart(2,"0")}`);
 
   let grid = DOW.map(d=>`<div class="caldow">${d}</div>`).join("");
-  for(let i=0;i<cells;i++){
-    const dayNum = i - firstDow + 1;
-    const out = dayNum<1 || dayNum>nDays;
-    const dt = new Date(y, mo, dayNum);
+  for(let i=0;i<cellCount;i++){
+    const dt = dayAt(i);
     const key = ymd(dt);
-    const isToday = !out && key===ymd(TODAY);
-    let inner = `<div class="caldate">${out?"":dayNum}</div>`;
+    const out = !week && dt.getMonth() !== mo;
+    const isToday = key===ymd(TODAY);
+    let inner = `<div class="caldate">${out?"":dt.getDate()}${week?`<span class="calmon">${dt.toLocaleDateString("en-SG",{month:"short"})}</span>`:""}</div>`;
     if(!out){
       const evs = onDay(key);
-      const show = expanded.has(key) ? evs : evs.slice(0,3);
+      const show = expanded.has(key) ? evs : evs.slice(0,perCell);
       inner += show.map(e=>{
         const c = catOf(e.cat);
         const runs = isLongRun(e);
@@ -1273,38 +1429,64 @@ function renderCalendar(rows){
                `title="${esc(e.name)} — ${esc(e.org)}${runs?` (runs to ${fmtDate(e.end)})`:""}">`+
                `${runs?"▸ ":""}${esc(e.name)}</button>`;
       }).join("");
-      if(evs.length>3 && !expanded.has(key))
-        inner += `<button class="calmore" data-more="${key}">+${evs.length-3} more</button>`;
+      if(evs.length>perCell && !expanded.has(key))
+        inner += `<button class="calmore" data-more="${key}">+${evs.length-perCell} more</button>`;
     }
     grid += `<div class="calcell${out?" out":""}${isToday?" today":""}">${inner}</div>`;
   }
 
   document.getElementById("calendar").innerHTML = `
     <div class="calbar">
-      <h3>${monthLabel}</h3>
-      <span class="calcount">${inMonth.length} event${inMonth.length===1?"":"s"} this month${tbc.length?` · ${tbc.length} with dates to be confirmed`:""}</span>
+      <h3>${label}</h3>
+      <span class="calcount">${inSpan.length} event${inSpan.length===1?"":"s"} ${periodWord}${tbc.length?` · ${tbc.length} with dates to be confirmed`:""}</span>
       <div class="calnav">
-        <button id="calPrev" aria-label="Previous month">‹ Prev</button>
+        <span class="calmode" role="group" aria-label="Calendar span">
+          <button id="calWeek" aria-pressed="${week}">Week</button><button id="calMonth" aria-pressed="${!week}">Month</button>
+        </span>
+        <button id="calPrev" aria-label="${week?"Previous week":"Previous month"}">‹ Prev</button>
         <button id="calToday">Today</button>
-        <button id="calNext" aria-label="Next month">Next ›</button>
+        <button id="calNext" aria-label="${week?"Next week":"Next month"}">Next ›</button>
       </div>
     </div>
-    <div class="calgrid">${grid}</div>
-    ${running.length?`<div class="caltbc"><h4>Runs through ${monthLabel} — shown on its start date above</h4>
+    <div class="calgrid${week?" weekgrid":""}">${grid}</div>
+    ${running.length?`<div class="caltbc"><h4>Runs through ${label} — shown on its start date above</h4>
       <div class="row">${running.map(e=>{const c=catOf(e.cat);
         return `<button class="calchip" data-ev="${e.id}" style="background:${c.bg};color:${c.fg};width:auto;display:inline-block">${esc(e.name)} <span style="opacity:.7;font-weight:500">· ${fmtDate(e.start)} – ${fmtDate(e.end)}</span></button>`;
       }).join("")}</div></div>`:""}
-    ${tbc.length?`<div class="caltbc"><h4>Also in ${monthLabel} — exact dates to be confirmed</h4>
+    ${tbc.length?`<div class="caltbc"><h4>Also in ${label} — exact dates to be confirmed</h4>
       <div class="row">${tbc.map(e=>{const c=catOf(e.cat);
         return `<button class="calchip" data-ev="${e.id}" style="background:${c.bg};color:${c.fg};width:auto;display:inline-block">${esc(e.name)}</button>`;
       }).join("")}</div></div>`:""}`;
 
-  document.getElementById("calPrev").onclick = ()=>{ calCursor=new Date(y,mo-1,1); expanded.clear(); render(); };
-  document.getElementById("calNext").onclick = ()=>{ calCursor=new Date(y,mo+1,1); expanded.clear(); render(); };
-  document.getElementById("calToday").onclick = ()=>{ calCursor=new Date(TODAY.getFullYear(),TODAY.getMonth(),1); expanded.clear(); render(); };
+  const step = n => {
+    calCursor = week ? (()=>{ const d=new Date(gridStart); d.setDate(d.getDate()+7*n); return d; })()
+                     : new Date(y, mo+n, 1);
+    expanded.clear(); render();
+  };
+  document.getElementById("calPrev").onclick  = ()=>step(-1);
+  document.getElementById("calNext").onclick  = ()=>step(1);
+  document.getElementById("calToday").onclick = ()=>{
+    calCursor = week ? new Date(TODAY) : new Date(TODAY.getFullYear(),TODAY.getMonth(),1);
+    expanded.clear(); render();
+  };
+  /* Switching span keeps you where you were rather than jumping home: a week you were looking
+     at opens as the month containing it, and a month opens at its first week — or at this week
+     if you are looking at the current month. */
+  document.getElementById("calWeek").onclick = ()=>{
+    if(week) return;
+    const here = TODAY.getFullYear()===y && TODAY.getMonth()===mo;
+    state.calMode="week"; calCursor = here ? new Date(TODAY) : new Date(y,mo,1);
+    expanded.clear(); render();
+  };
+  document.getElementById("calMonth").onclick = ()=>{
+    if(!week) return;
+    state.calMode="month"; calCursor = new Date(gridStart.getFullYear(), gridStart.getMonth(), 1);
+    expanded.clear(); render();
+  };
   document.querySelectorAll("[data-more]").forEach(b=>b.onclick=()=>{ expanded.add(b.dataset.more); render(); });
   document.querySelectorAll("[data-ev]").forEach(b=>b.onclick=()=>showEvent(+b.dataset.ev));
 }
+
 
 function showEvent(id){
   const e = EVENTS.find(x=>x.id===id); if(!e) return;
@@ -1423,19 +1605,40 @@ function renderCards(rows){
       ${state.desc && e.desc ? `<div class="evdesc" style="margin-top:0">${esc(e.desc)}</div>` : ""}
       <div class="crow"><div class="k">When</div><div class="v">${dateEl(e)}${e.datePrecision==="month"?"":`<div class="sans" style="font-size:12.5px;color:var(--ink2);margin-top:4px">${esc(e.time||"")}</div>`}</div></div>
       <div class="crow"><div class="k">Where</div><div class="v">${venueEl(e)}</div></div>
-      <div class="crow"><div class="k">Who</div><div class="v">${esc(e.org)}</div></div>
-      <div class="crow"><div class="k">Fee</div><div class="v">${feeEl(e)}</div></div>
-      ${e.restrict?`<div class="crow"><div class="k">Note</div><div class="v" style="color:var(--ink2);font-size:13px">${esc(e.restrict)}</div></div>`:""}
-      <div class="cfoot">${regEl(e)||"<span></span>"}<a class="srclink" href="${esc(e.source)}" target="_blank" rel="noopener">Source ↗</a></div>
+      <div class="cmore">
+        <div class="crow"><div class="k">Who</div><div class="v">${esc(e.org)}</div></div>
+        <div class="crow"><div class="k">Fee</div><div class="v">${feeEl(e)}</div></div>
+        ${e.restrict?`<div class="crow"><div class="k">Note</div><div class="v" style="color:var(--ink2);font-size:13px">${esc(e.restrict)}</div></div>`:""}
+        <div class="cfoot">${regEl(e)||"<span></span>"}<a class="srclink" href="${esc(e.source)}" target="_blank" rel="noopener">Source ↗</a></div>
+      </div>
+      <button type="button" class="cexpand sans" aria-expanded="false">
+        <span class="cexpandtxt">Organiser, cost, how to register</span><span class="marrow">▾</span>
+      </button>
     </article>`;
   }).join("");
 }
+/* ---------- cards on a phone ----------
+   A full card is six rows deep, so three of them filled a screen and scanning what is on meant
+   a great deal of scrolling past detail nobody had asked for yet. On a phone each card now
+   shows what you scan by — name, kind, when, where — and keeps organiser, cost, registration
+   and the source link behind one tap. Everything is still in the page, so search and print see
+   it, and on a laptop nothing is hidden at all. */
+document.addEventListener("click", ev=>{
+  const btn = ev.target.closest(".cexpand");
+  if(!btn) return;
+  const card = btn.closest(".card");
+  const open = card.classList.toggle("open");
+  btn.setAttribute("aria-expanded", open);
+  btn.querySelector(".cexpandtxt").textContent =
+    open ? "Hide details" : "Organiser, cost, how to register";
+});
 
 function render(){
   syncSortUI();
   Object.keys(MULTIS).forEach(paintMulti);
   paintDate();
-  paintOngoingCount();
+  paintAlso();
+  paintUpcomingCount();
   paintFiltersToggle();
   const rows = filtered();
   const n = rows.length;
@@ -1450,7 +1653,7 @@ function render(){
   if(hasQuery && hidden > 0){
     note.hidden = false;
     note.innerHTML = `<span><b>${hidden}</b> more ${hidden>1?"events match":"event matches"} “<b>${esc(state.q.trim())}</b>”`
-      + ` but ${hidden>1?"are":"is"} hidden by your filters — events already under way, past events, other languages, or weekly activities.</span>`
+      + ` but ${hidden>1?"are":"is"} hidden by your filters — events already under way, other languages, weekly activities, or RCIA / RCIY journeys already begun.</span>`
       + `<button type="button" id="widen">Show ${hidden>1?"all "+(n+hidden)+" matches":"it too"}</button>`;
     document.getElementById("widen").onclick = widenToSearch;
   } else {
@@ -1490,23 +1693,87 @@ function toggleChip(id, key){
   const el = document.getElementById(id);
   el.onclick = ()=>{ state[key]=!state[key]; el.setAttribute("aria-pressed", state[key]); render(); };
 }
-toggleChip("fUpcoming","upcoming"); toggleChip("fOngoing","ongoing"); toggleChip("fFree","free"); toggleChip("fOnline","online");
+toggleChip("fUpcoming","upcoming"); toggleChip("fFree","free"); toggleChip("fOnline","online");
 toggleChip("fDesc","desc");
-["fLang|lang","fFreq|freq"].forEach(p=>{
-  const [id,key]=p.split("|");
-  document.getElementById(id).onchange = e => {
-    state[key]=e.target.value;
-    /* Daily and weekly activities run all year, so every one of them started before today and
-       none is ever "upcoming". Asking for them while only Upcoming is pressed therefore returns
-       an empty list, which reads as a broken page rather than a filter clash. Switch the
-       under-way chip on at the same time so the choice actually shows something. */
-    if(key==="freq" && e.target.value==="only" && !state.ongoing){
-      state.ongoing = true;
-      document.getElementById("fOngoing").setAttribute("aria-pressed","true");
-    }
+document.getElementById("fLang").onchange = e => { state.lang = e.target.value; render(); };
+
+/* ---------- "Also show" ----------
+   Three things the default view leaves out, gathered behind one button instead of a chip and a
+   menu of their own. Each is a plain on/off, each shows what it would add, and two of them
+   quietly need the third: a year-round weekly activity and an initiation journey already begun
+   both started before today, so asking for either while only "Upcoming" is pressed would return
+   an empty list. Ticking one therefore switches "already under way" on as well. */
+const ALSO = [
+  {k:"ongoing", label:"Events already under way",
+   note:"Started before today and still running."},
+  {k:"freqAll", label:"Daily &amp; weekly activities",
+   note:"Prayer groups, weekly devotions and other year-round activities."},
+  {k:"started", label:"RCIA / RCIY journeys already begun",
+   note:"Intakes that have started. Most run to the following Easter."}
+];
+const alsoGet = k => k==="freqAll" ? state.freq==="all" : state[k];
+const alsoSet = (k,v)=>{ if(k==="freqAll") state.freq = v ? "all" : "excl"; else state[k]=v; };
+/* What ticking this would actually add, not what the list would then total — the same question
+   the counts in the other panels answer. */
+function alsoCount(k){
+  const save = {ongoing:state.ongoing, freq:state.freq, started:state.started};
+  alsoSet(k, false);
+  const before = matching().length;
+  alsoSet(k, true);
+  const after = matching().length;
+  Object.assign(state, save);
+  return after - before;
+}
+function alsoActive(){ return ALSO.filter(o=>alsoGet(o.k)).length; }
+function paintAlso(){
+  const host = document.getElementById("mAlso");
+  if(!host) return;
+  const n = alsoActive();
+  host.querySelector(".mlabel").textContent =
+    n===0 ? "Also show…" : n===1 ? ALSO.find(o=>alsoGet(o.k)).label.replace("&amp;","&") : n+" more shown";
+  host.classList.toggle("on", n>0);
+  const panel = host.querySelector(".multipanel");
+  if(panel.hidden) return;
+  panel.querySelectorAll(".mopt").forEach(row=>{
+    const k = row.dataset.k, on = alsoGet(k);
+    row.querySelector("input").checked = on;
+    row.querySelector(".n").textContent = on ? "" : alsoCount(k);
+  });
+  const clr = panel.querySelector(".mclear");
+  clr.disabled = n===0;
+  clr.textContent = n ? "Clear "+n : "Clear";
+}
+function buildAlso(){
+  const host = document.getElementById("mAlso");
+  if(!host) return;
+  const btn = host.querySelector(".multibtn"), panel = host.querySelector(".multipanel");
+  panel.innerHTML =
+    '<div class="mhead"><span>Left out of the default view</span>' +
+    '<button type="button" class="mclear">Clear</button></div>' +
+    ALSO.map(o=>`<label class="mopt tall" data-k="${o.k}"><input type="checkbox">` +
+      `<span class="mtxt"><b>${o.label}</b><em>${o.note}</em></span><span class="n"></span></label>`).join("") +
+    '<div class="msheetdone"><button type="button" class="donebtn">Done</button></div>';
+  panel.querySelectorAll(".mopt").forEach(row=>{
+    row.addEventListener("click", ev=>{
+      ev.preventDefault();
+      alsoSet(row.dataset.k, !alsoGet(row.dataset.k));
+      render();
+    });
+  });
+  panel.querySelector(".mclear").addEventListener("click", ev=>{
+    ev.stopPropagation();
+    ALSO.forEach(o=>alsoSet(o.k,false));
     render();
-  };
-});
+  });
+  wireDone(panel);
+  btn.addEventListener("click", ev=>{
+    ev.stopPropagation();
+    const open = panel.hidden;
+    closeAllMultis();
+    if(open){ panel.hidden=false; btn.setAttribute("aria-expanded","true"); paintAlso(); fitPanel(host.querySelector(".multipanel")); paintScrim(); }
+  });
+  panel.addEventListener("click", ev=>ev.stopPropagation());
+}
 
 /* ---------- multi-select dropdowns (kinds, locations) ---------- */
 /* How many events a given option would add, judged against every OTHER filter
@@ -1553,7 +1820,8 @@ function buildMulti(id){
         ? `<span class="swatch" style="background:${CATS[v].fg}"></span>` : "";
       return `<label class="mopt" data-v="${esc(v)}"><input type="checkbox">${sw}`+
              `<span class="mtxt">${esc(v)}</span><span class="n"></span></label>`;
-    }).join("");
+    }).join("") +
+    '<div class="msheetdone"><button type="button" class="donebtn">Done</button></div>';
   panel.querySelectorAll(".mopt input").forEach(cb=>{
     cb.addEventListener("change", ev=>{
       const v = ev.target.closest(".mopt").dataset.v;
@@ -1587,8 +1855,10 @@ function buildMulti(id){
     closeAllMultis();
     panel.hidden = !open;
     btn.setAttribute("aria-expanded", String(open));
-    if(open){ paintMulti(id); fitPanel(panel); const box = m.filter && panel.querySelector(".mfilter input"); if(box) box.focus(); }
+    if(open){ paintMulti(id); fitPanel(panel); paintScrim();
+      const box = m.filter && panel.querySelector(".mfilter input"); if(box && innerWidth > 720) box.focus(); }
   });
+  wireDone(panel);
   panel.addEventListener("click", e=>e.stopPropagation());
 }
 /* ---------- Date range ---------- */
@@ -1632,7 +1902,8 @@ function buildDate(){
     RANGES.map(r=>`<label class="mopt" data-r="${r.k}"><input type="checkbox"><span class="mtxt">${r.label}</span><span class="n"></span></label>`).join("") +
     '<div class="mrange"><p>Or pick your own dates</p>' +
     '<label><span>From</span><input type="date" id="dFrom"></label>' +
-    '<label><span>To</span><input type="date" id="dTo"></label></div>';
+    '<label><span>To</span><input type="date" id="dTo"></label></div>' +
+    '<div class="msheetdone"><button type="button" class="donebtn">Done</button></div>';
   panel.querySelectorAll(".mopt input").forEach(cb=>{
     cb.addEventListener("change", ev=>{
       const k=ev.target.closest(".mopt").dataset.r;
@@ -1652,15 +1923,20 @@ function buildDate(){
     closeAllMultis();
     panel.hidden=!open;
     btn.setAttribute("aria-expanded", String(open));
-    if(open){ paintDate(); fitPanel(panel); }
+    if(open){ paintDate(); fitPanel(panel); paintScrim(); }
   });
+  wireDone(panel);
   panel.addEventListener("click", e=>e.stopPropagation());
 }
 buildDate();
+buildAlso();
 
 /* Keep a dropdown inside the window — the organiser list is wide and the
    buttons wrap, so on a phone it can otherwise open off the edge. */
 function fitPanel(panel){
+  /* On a phone the panel is a sheet pinned to the bottom of the window, not a dropdown hanging
+     off a button, so there is nothing to nudge sideways. */
+  if(getComputedStyle(panel).position === "fixed"){ panel.style.left = ""; return; }
   panel.style.left = "0px";
   const vw = document.documentElement.clientWidth;
   let r = panel.getBoundingClientRect();
@@ -1669,23 +1945,10 @@ function fitPanel(panel){
   r = panel.getBoundingClientRect();
   if(r.left < 12) panel.style.left = ((parseFloat(panel.style.left) || 0) + (12 - r.left)) + "px";
 }
-/* How many events are under way right now that the other filters would allow. Shown on the
-   chip so nobody has to guess whether pressing it is worth their while. */
-function paintOngoingCount(){
-  const el = document.getElementById("ongoingCount");
-  if(!el) return;
-  if(state.ongoing){ el.textContent = ""; return; }
-  const save = {u:state.upcoming, o:state.ongoing};
-  state.upcoming = false; state.ongoing = true;
-  const n = matching().length;
-  state.upcoming = save.u; state.ongoing = save.o;
-  el.textContent = n ? " " + n : "";
-}
-
 /* ---------- the phone-sized filter drawer ----------
    The button carries a count of how many filters are narrowing the list, because a collapsed
    panel must never hide the fact that something is being filtered out. */
-const DEFAULTS = {upcoming:true, ongoing:false, free:false, online:false, lang:"en", freq:"excl"};
+const DEFAULTS = {upcoming:true, ongoing:false, free:false, online:false, lang:"en", freq:"excl", started:false};
 function activeFilterCount(){
   let n = 0;
   for(const k in DEFAULTS) if(state[k] !== DEFAULTS[k]) n++;
@@ -1694,6 +1957,18 @@ function activeFilterCount(){
   n += state.orgs.length ? 1 : 0;
   n += (state.from || state.to) ? 1 : 0;
   return n;
+}
+/* How many events are still to come that the other filters would allow. It sits on the chip
+   rather than in the hero, because the hero counts everything held and this counts what you
+   would actually be shown — two different questions that had been sharing one number. */
+function paintUpcomingCount(){
+  const el = document.getElementById("upcomingCount");
+  if(!el) return;
+  const save = {u:state.upcoming, o:state.ongoing};
+  state.upcoming = true; state.ongoing = false;
+  const n = matching().length;
+  state.upcoming = save.u; state.ongoing = save.o;
+  el.textContent = n ? " " + n : "";
 }
 function paintFiltersToggle(){
   const label = document.getElementById("filtersToggleLabel");
@@ -1711,13 +1986,29 @@ function paintFiltersToggle(){
   });
 })();
 
+/* Wire the sheet's Done button. It cannot be delegated from the document, because each panel
+   stops clicks from reaching it. */
+function wireDone(panel){
+  const d = panel.querySelector(".donebtn");
+  if(d) d.addEventListener("click", ev=>{ ev.stopPropagation(); closeAllMultis(); });
+}
+function paintScrim(){
+  const scrim = document.getElementById("sheetscrim");
+  if(!scrim) return;
+  if(!scrim.dataset.wired){ scrim.dataset.wired="1";
+    scrim.addEventListener("click", ev=>{ ev.stopPropagation(); closeAllMultis(); }); }
+  const anyOpen = [...document.querySelectorAll(".multi .multipanel")].some(p=>!p.hidden);
+  scrim.hidden = !anyOpen;
+  document.body.classList.toggle("sheetopen", anyOpen);
+}
 function closeAllMultis(){
-  [...Object.keys(MULTIS), "mDate"].forEach(id=>{
+  [...Object.keys(MULTIS), "mDate", "mAlso"].forEach(id=>{
     const host = document.getElementById(id);
     if(!host) return;
     host.querySelector(".multipanel").hidden = true;
     host.querySelector(".multibtn").setAttribute("aria-expanded","false");
   });
+  paintScrim();
 }
 Object.keys(MULTIS).forEach(buildMulti);
 document.addEventListener("click", closeAllMultis);
@@ -1725,11 +2016,9 @@ document.addEventListener("keydown", e=>{ if(e.key==="Escape") closeAllMultis();
 /* Drop every narrowing filter but keep the search text, so the reader sees
    everything the words actually match. */
 function widenToSearch(){
-  state = {...state, upcoming:false, ongoing:false, free:false, online:false, lang:"all", freq:"all", cats:[], locs:[], orgs:[], from:"", to:"", range:""};
+  state = {...state, upcoming:false, ongoing:false, free:false, online:false, lang:"all", freq:"all", started:true, cats:[], locs:[], orgs:[], from:"", to:"", range:""};
   document.getElementById("fLang").value = "all";
-  document.getElementById("fFreq").value = "all";
   document.getElementById("fUpcoming").setAttribute("aria-pressed","false");
-  document.getElementById("fOngoing").setAttribute("aria-pressed","false");
   ["fFree","fOnline"].forEach(i=>document.getElementById(i).setAttribute("aria-pressed","false"));
   closeAllMultis();
   render();
@@ -1746,12 +2035,11 @@ function syncSortUI(){
                      : (asc ? "A – Z" : "Z – A");
 }
 document.getElementById("fReset").onclick = ()=>{
-  state = {...state, q:"", upcoming:true, ongoing:false, free:false, online:false, lang:"en", freq:"excl", desc:true, cats:[], locs:[], orgs:[], from:"", to:"", range:"", sort:"start", dir:1};
+  state = {...state, q:"", upcoming:true, ongoing:false, free:false, online:false, lang:"en", freq:"excl", started:false, desc:true, cats:[], locs:[], orgs:[], from:"", to:"", range:"", sort:"start", dir:1};
   q.value=""; clearq.style.display="none";
   closeAllMultis();
-  document.getElementById("fLang").value="en"; document.getElementById("fFreq").value="excl";
+  document.getElementById("fLang").value="en";
   document.getElementById("fUpcoming").setAttribute("aria-pressed","true");
-  document.getElementById("fOngoing").setAttribute("aria-pressed","false");
   ["fFree","fOnline"].forEach(i=>document.getElementById(i).setAttribute("aria-pressed","false"));
   document.getElementById("fDesc").setAttribute("aria-pressed","true");
   render();
@@ -1767,7 +2055,7 @@ Object.entries(VIEWS).forEach(([btn,v])=>{
 window.addEventListener("resize", ()=>render());
 
 /* ---------- stats & footer ---------- */
-document.getElementById("statTotal").textContent = EVENTS.filter(e=>isAhead(e)&&!e.recurring).length;
+document.getElementById("statTotal").textContent = EVENTS.length;
 document.getElementById("statOrgs").textContent  = new Set(EVENTS.map(e=>e.org)).size;
 document.getElementById("statSoon").textContent  = EVENTS.filter(e=>isAhead(e) && !e.recurring && daysAway(e)<=30).length;
 const collected = new Date(DATA_COLLECTED+"T00:00:00");
