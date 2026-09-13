@@ -130,7 +130,7 @@ select:focus{border-color:var(--gold)}
 .multi{position:relative;display:inline-block}
 .multi.wide .multipanel{min-width:320px}
 .multi.wide .mopt .mtxt{white-space:normal;line-height:1.35}
-.multibtn .mlabel{display:inline-block;max-width:200px;overflow:hidden;text-overflow:ellipsis;
+.multibtn .mlabel{display:inline-block;max-width:230px;overflow:hidden;text-overflow:ellipsis;
   white-space:nowrap;vertical-align:bottom}
 .mfilter{padding:0 4px 6px}
 .mfilter input{
@@ -571,7 +571,7 @@ footer h4{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var
 
     <div class="filters" id="filters">
       <button class="chip" id="fUpcoming" aria-pressed="true">Upcoming<span class="chipcount" id="upcomingCount"></span></button>
-      <span class="multi wide" id="mAlso"><button type="button" class="multibtn" aria-haspopup="true" aria-expanded="false" title="Things left out of the default view — tick to bring them in"><span class="mlabel">Also show…</span><span class="marrow">▾</span></button><div class="multipanel" hidden></div></span>
+      <span class="multi wide" id="mAlso"><button type="button" class="multibtn" aria-haspopup="true" aria-expanded="false" title="Things left out of the default view — tick to bring them in"><span class="mlabel">Also show ongoing/regular</span><span class="marrow">▾</span></button><div class="multipanel" hidden></div></span>
       <button class="chip" id="fFree" aria-pressed="false">Free only</button>
       <button class="chip" id="fOnline" aria-pressed="false">Online only</button>
       <button class="chip" id="fDesc" aria-pressed="true">Descriptions</button>
@@ -720,7 +720,7 @@ footer h4{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var
         <b>Not listed:</b> regular Masses, novenas and standing devotions.<br>
         The count at the top of the page is every event held. The <b>Upcoming</b> button carries the number still
         to come — the rest have already started, or are weekly activities, or RCIA / RCIY journeys already begun.
-        Use <b>Also show</b> to bring those in.<br>
+        Use <b>Also show ongoing/regular</b> to bring those in.<br>
         <span id="privacynote"></span>
         <b>Best viewed on a laptop or desktop.</b> The table view puts every detail side by side; on a phone the
         page falls back to cards and the filters fold behind a single button.
@@ -2017,7 +2017,7 @@ function paintAlso(){
   if(!host) return;
   const n = alsoActive();
   host.querySelector(".mlabel").textContent =
-    n===0 ? "Also show…" : n===1 ? ALSO.find(o=>alsoGet(o.k)).label.replace("&amp;","&") : n+" more shown";
+    n===0 ? "Also show ongoing/regular" : n===1 ? ALSO.find(o=>alsoGet(o.k)).label.replace("&amp;","&") : n+" more shown";
   host.classList.toggle("on", n>0);
   const panel = host.querySelector(".multipanel");
   if(panel.hidden) return;
